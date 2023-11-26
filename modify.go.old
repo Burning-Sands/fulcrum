@@ -1,0 +1,39 @@
+// https://forum.golangbridge.org/t/modify-yaml-files-using-golang/31838
+
+// package main
+
+// func modifyYaml() {
+// 	inputFile, err := os.ReadFile("values.yaml")
+// 	if err != nil {
+// 		log.Fatalf("Problem opening file: %v", err)
+// 	}
+// 	var values yaml.Node
+// 	yaml.Unmarshal(inputFile, &values)
+// 	// Change image name
+// 	imageNode := findChildNode("name", &values)
+// 	if imageNode != nil {
+// 		imageNode.SetString("latest")
+// 	}
+// 	// Create a modified yaml file
+// 	f, err := os.Create("values-output.yaml")
+// 	if err != nil {
+// 		log.Fatalf("Problem creating file: %v", err)
+// 	}
+// 	defer f.Close()
+// 	yaml.NewEncoder(f).Encode(values.Content[0])
+// }
+
+// // Recusive function to find the child node by value that we care about.
+// func findChildNode(value string, node *yaml.Node) *yaml.Node {
+// 	for _, v := range node.Content {
+// 		// If we found the value we are looking for, return it.
+// 		if v.Value == value {
+// 			return v
+// 		}
+// 		// Otherwise recursively look more
+// 		if child := findChildNode(value, v); child != nil {
+// 			return child
+// 		}
+// 	}
+// 	return nil
+// }
