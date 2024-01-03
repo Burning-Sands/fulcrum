@@ -1,3 +1,3 @@
 uhc:
-  image: daga-test
+  image: nginx
   tag: "12314"

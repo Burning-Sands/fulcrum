@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>YAML Fields editor</title>
+</head>
+<body>
+<h1>Edit yaml fields or upload values.yaml</h1>
+
+<form action="/upload" method="post" enctype="multipart/form-data">
+    Path: <input type="text" name="path"><br>
+    Value: <input type="text" name="value"><br>
+ <!-- File: <input type="file" name="file"><br><br>-->
+
+    <input type="submit" value="Submit">
+    <input id="fileupload" name="file" type="file" />
+    <div></div>
+    <script>
+    document.querySelector('#fileupload').addEventListener('change', function(){
+        var fr = new FileReader();
+        fr.onload = function(){
+            document.querySelector('div').innerHTML = this.result;
+        }
+        fr.readAsText(this.files[0]);
+    });
+    </script>
+
+</form>
+</body>

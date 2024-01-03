@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	// "net/http"
+	"net/http"
 	// git "github.com/go-git/go-git/v5"
 	// "github.com/go-git/go-git/v5/plumbing/transport/http"
 	// "github.com/xanzy/go-gitlab"
@@ -17,7 +17,30 @@ import (
 
 func main() {
 
-	yamlNode := changeYamlNodeValue("/uhc/tag", "12314")
+	router := gin.Default()
+	router.Static("/", "./public")
+	//router.GET("/values", getValues)
+	router.POST("/upload", postValues)
+
+	router.Run(":8080")
+
+}
+
+func changeYamlNodeValue(keyPath string, setValue string) {
+	
+	yamlFile, err := os.ReadFile("values.yaml")
+	if err != nil {
+		panic(err)
+	}
+
+	var yamlNode yaml.Node
+	yaml.Unmarshal([]byte(yamlFile), &yamlNode)
+
+	r, _ := yptr.Find(&yamlNode, keyPath)
+	fmt.Printf("Scalar %q at %d:%d\n", r.Value, r.Line, r.Column)
+	r.SetString(setValue)
+	fmt.Printf("Scalar %q at %d:%d\n", r.Value, r.Line, r.Column)
+
 
 	f, err := os.Create("values.yaml")
 	if err != nil {
@@ -27,31 +50,29 @@ func main() {
 	encoder.SetIndent(2)
 	encoder.Encode(yamlNode.Content[0])
 	encoder.Close()
-
-	router := gin.Default()
-	router.GET("/values", getValues)
-
-	router.Run(":8080")
-
-}
-
-func changeYamlNodeValue(keyPath string, setValue string) (yamlNode yaml.Node) {
-
-	yamlFile, err := os.ReadFile("values.yaml")
-	if err != nil {
-		panic(err)
-	}
-
-	yaml.Unmarshal([]byte(yamlFile), &yamlNode)
-
-	r, _ := yptr.Find(&yamlNode, keyPath)
-	fmt.Printf("Scalar %q at %d:%d\n", r.Value, r.Line, r.Column)
-	r.SetString(setValue)
-	fmt.Printf("Scalar %q at %d:%d\n", r.Value, r.Line, r.Column)
-
-	return yamlNode
 }
 
 func getValues(c *gin.Context) {
-	c.File("values.yaml")
+	c.YAML(http.StatusOK, gin.H{"message": "hey", "status": http.StatusOK})
+}
+
+func postValues(c *gin.Context) {
+
+	path := c.PostForm("path")
+	value := c.PostForm("value")
+	changeYamlNodeValue(path, value)
+
+	// Source
+	// file, err := c.FormFile("file")
+	// if err != nil {
+	// 	c.String(http.StatusBadRequest, "get form err: %s", err.Error())
+	// 	return
+	// }
+
+	// if err := c.SaveUploadedFile(file, "components.yaml"); err != nil {
+	// 	c.String(http.StatusBadRequest, "upload file err: %s", err.Error())
+	// 	return
+	// }
+
+	c.String(http.StatusOK, "File values.yaml updated successfully with path=%s and value=%s.", path, value )
 }
