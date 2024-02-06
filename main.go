@@ -22,7 +22,7 @@ func main() {
 	// fmt.Print(m)
 
 	// define handlers
-	http.HandleFunc("/", handlers.DisplayFilms)
+	http.HandleFunc("/", handlers.DisplayNodes)
 	// //http.HandleFunc("/add-film/", handlers.AddFilm)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))

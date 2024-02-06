@@ -1,3 +1,5 @@
 uhc:
   image: nginx
-  tag: "12314"
+  tag: 
+    test: "12314"
+    viable: 12345
