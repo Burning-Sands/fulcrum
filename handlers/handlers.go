@@ -21,7 +21,7 @@ func DisplayNodes(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	m := map[string]interface{}{}
+	m := map[interface{}]interface{}{}
 
 	tmpl := template.Must(template.ParseFiles("public/index.html"))
 	err = yaml.Unmarshal([]byte(yamlFile), &m)
@@ -31,19 +31,12 @@ func DisplayNodes(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, m)
 }
 
-func AddFilms(w http.ResponseWriter, r *http.Request) {
-
-	yamlFile, err := os.ReadFile("values.yaml")
-	if err != nil {
-		panic(err)
-	}
+func AddService(w http.ResponseWriter, r *http.Request) {
 
 	m := map[interface{}]interface{}{}
-
+	title := r.PostFormValue("title")
+	director := r.PostFormValue("director")
+	m[title] = director
 	tmpl := template.Must(template.ParseFiles("public/index.html"))
-	err = yaml.Unmarshal([]byte(yamlFile), &m)
-	if err != nil {
-		log.Fatal("error")
-	}
-	tmpl.Execute(w, m)
+	tmpl.ExecuteTemplate(w, "film-list-element", m)
 }

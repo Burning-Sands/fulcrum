@@ -16,8 +16,11 @@
             <h1 class="mb-4">Service List</h1>
         
             <ul class="list-group fs-5 me-5" id="film-list">
-                {{ range  $key, $value := .uhc}}
-                    <li class="list-group-item bg-primary text-white">{{ $key }}:{{ $value }}</li>
+                
+                {{ block "film-list-element" .}}
+                    {{ range $key, $value := .}}
+                        <li class="list-group-item bg-primary text-white">{{ $key }}:{{ $value }}</li>
+                    {{ end }}
                 {{ end }}
             </ul>
         </div>
