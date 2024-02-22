@@ -1,2 +1,11 @@
+test:
+  - jeden
+  - dwa
+
 uhc:
   image: nginx
+  tag: mapping-node
+  
+nested-map:
+    nested:
+      value: test
