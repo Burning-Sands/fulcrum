@@ -11,7 +11,7 @@ func main() {
 
 	// define handlers
 	http.HandleFunc("/", handlers.DisplayNodes)
-    http.HandleFunc("/add-service/", handlers.AddService)
+	http.HandleFunc("/add-service/", handlers.AddService)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
