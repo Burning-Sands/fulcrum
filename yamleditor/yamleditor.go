@@ -1,37 +1,42 @@
 package yamleditor
 
 import (
-	"os"
+	"bytes"
+	"fmt"
 
-	yqlib "github.com/mikefarah/yq/v4/pkg/yqlib"
+	yptr "github.com/vmware-labs/yaml-jsonpointer"
 	yaml "gopkg.in/yaml.v3"
 )
 
-func ChangeYamlNodeValue(keyPath string, setValue string) {
+type YamlOperator struct {
+	YamlNode yaml.Node
+	Buffer   bytes.Buffer
+}
 
-	yamlFile, err := os.ReadFile("values.yaml")
+func ChangeYamlNodeValue(node *yaml.Node, keyPath string, setValue string) {
+
+	r, err := yptr.Find(node, keyPath)
 	if err != nil {
 		panic(err)
 	}
+	fmt.Printf("Found scalar %q at %d:%d\n", r.Value, r.Line, r.Column)
+	r.SetString(setValue)
+	fmt.Printf("Set scalar to %q at %d:%d\n", r.Value, r.Line, r.Column)
 
-	m := make(map[string]*yqlib.CandidateNode)
-	var yamlNode yaml.Node
-	var candidateNode yqlib.CandidateNode
-	yaml.Unmarshal([]byte(yamlFile), &yamlNode)
-	candidateNode.UnmarshalYAML(&yamlNode, m)
+}
 
-	yqlib.NodeToString(&candidateNode)
-
-	// r, _ := yptr.Find(&yamlNode, keyPath)
-	// fmt.Printf("Scalar %q at %d:%d\n", r.Value, r.Line, r.Column)
-	// r.SetString(setValue)
-	// fmt.Printf("Scalar %q at %d:%d\n", r.Value, r.Line, r.Column)
-
-	// f, err := os.Create("values.yaml")
-	// if err != nil {
-	// 	log.Fatalf("Problem opening file: %v", err)
-	// }
-	// encoder := yqlib.NewYamlEncoder(2, false)
-	// encoder.Encode(f, yamlNode.Content[0])
-
+func IterateOverYamlNode(node *yaml.Node, buffer *bytes.Buffer) {
+	for _, v := range node.Content {
+		switch v.Kind {
+		case yaml.SequenceNode:
+			IterateOverYamlNode(v, buffer)
+		case yaml.MappingNode:
+			IterateOverYamlNode(v, buffer)
+		case yaml.ScalarNode:
+			//fmt.Println(v.Value)
+			buffer.WriteString(string(v.Value) + " ")
+		default:
+			fmt.Println("Unknown node kind:", node.Kind)
+		}
+	}
 }

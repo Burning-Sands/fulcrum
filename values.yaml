@@ -1,11 +1,10 @@
-test:
-  - jeden
-  - dwa
-
 uhc:
-  image: nginx
-  tag: mapping-node
-  
-nested-map:
-    nested:
-      value: test
+  image:
+    tag: mapping-node
+    tag2: dawea
+  zmienionytest:
+    dwatest: siema
+    wyjscie: wawa
+    zmienionytest: zmienionytest
+  break:
+    trzy: dwa

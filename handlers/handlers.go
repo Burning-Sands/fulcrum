@@ -1,42 +1,44 @@
 package handlers
 
 import (
+	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"os"
+	"reflect"
 
+	"github.com/fulcrum29/fulcrum/yamleditor"
 	"gopkg.in/yaml.v3"
 )
 
-// type Film struct {
-// 	Title    string
-// 	Director string
-// }
+var yamlEdit yamleditor.YamlOperator
 
 func DisplayNodes(w http.ResponseWriter, r *http.Request) {
 
-	yamlFile, err := os.ReadFile("values.yaml")
-	if err != nil {
-		panic(err)
+	if reflect.ValueOf(yamlEdit).IsZero() {
+		file, err := os.ReadFile("values.yaml")
+		if err != nil {
+			panic(err)
+		}
+		yaml.Unmarshal([]byte(file), &yamlEdit.YamlNode)
 	}
 
-	m := map[interface{}]interface{}{}
+	yamlEdit.Buffer.Reset()
+	yamleditor.IterateOverYamlNode(&yamlEdit.YamlNode, &yamlEdit.Buffer)
 
 	tmpl := template.Must(template.ParseFiles("public/index.html"))
-	err = yaml.Unmarshal([]byte(yamlFile), &m)
-	if err != nil {
-		log.Fatal("error")
-	}
-	tmpl.Execute(w, m)
+	tmpl.Execute(w, yamlEdit.Buffer.String())
 }
 
 func AddService(w http.ResponseWriter, r *http.Request) {
 
-	m := map[interface{}]interface{}{}
+	yamleditor.IterateOverYamlNode(&yamlEdit.YamlNode, &yamlEdit.Buffer)
+	fmt.Println(yamlEdit.Buffer.String())
 	title := r.PostFormValue("title")
 	director := r.PostFormValue("director")
-	m[title] = director
-	tmpl := template.Must(template.ParseFiles("public/index.html"))
-	tmpl.ExecuteTemplate(w, "film-list-element", m)
+	yamleditor.ChangeYamlNodeValue(&yamlEdit.YamlNode, title, director)
+	w.Header().Add("HX-Trigger", "newValue")
+
+	// tmpl := template.Must(template.ParseFiles("public/index.html"))
+	// tmpl.ExecuteTemplate(w, "film-list-element", m)
 }

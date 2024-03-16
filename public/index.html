@@ -15,26 +15,21 @@
         <div class="col-8">
             <h1 class="mb-4">Service List</h1>
         
-            <ul class="list-group fs-5 me-5" id="film-list">
-                
-                {{ block "film-list-element" .}}
-                    {{ range $key, $value := .}}
-                        <li class="list-group-item bg-primary text-white">{{ $key }}:{{ $value }}</li>
-                    {{ end }}
-                {{ end }}
+            <ul class="list-group fs-5 me-5" id="film-list" hx-get="/" hx-swap="outerHTML" hx-trigger="newValue from:body">
+                <li class="list-group-item bg-primary text-white">{{ . }}</li>
             </ul>
         </div>
 
         <div class="col-4">
-            <h1 class="mb-4">Add Service</h1>
+            <h1 class="mb-4">Change service values</h1>
 
-            <form hx-post="/add-service/" hx-target="#film-list" hx-swap="beforeend" hx-indicator="#spinner">
+            <form hx-post="/add-service/" hx-swap="outerHTML">
                 <div class="mb-2">
-                    <label for="film-title">Title</label>
+                    <label for="film-title">Path</label>
                     <input type="text" name="title" id="film-title" class="form-control" />
                 </div>
                 <div class="mb-3">
-                    <label for="film-director">Destination</label>
+                    <label for="film-director">Key to add</label>
                     <input type="text" name="director" id="film-director" class="form-control" />
                 </div>
 
