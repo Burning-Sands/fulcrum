@@ -9,13 +9,13 @@
     <script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
 
 </head>
-<body class="container">
+<body class="container" hx-get="/" hx-trigger="newValue from:body">
 
     <div class="row mt-4 g-4">
         <div class="col-8">
             <h1 class="mb-4">Service List</h1>
         
-            <ul class="list-group fs-5 me-5" id="film-list" hx-get="/" hx-swap="outerHTML" hx-trigger="newValue from:body">
+            <ul class="list-group fs-5 me-5" id="service-list">
                 <li class="list-group-item bg-primary text-white">{{ . }}</li>
             </ul>
         </div>
@@ -23,7 +23,7 @@
         <div class="col-4">
             <h1 class="mb-4">Change service values</h1>
 
-            <form hx-post="/add-service/" hx-swap="outerHTML">
+            <form hx-post="/add-service/">
                 <div class="mb-2">
                     <label for="film-title">Path</label>
                     <input type="text" name="title" id="film-title" class="form-control" />
@@ -34,7 +34,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">
-                    <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
+                    <!-- <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span> -->
                     Submit
                 </button>
             </form>
