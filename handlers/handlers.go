@@ -3,8 +3,10 @@ package handlers
 import (
 	"html/template"
 	"net/http"
+	"os"
 
 	"github.com/fulcrum29/fulcrum/yamleditor"
+	"gopkg.in/yaml.v3"
 )
 
 var yamlEdit yamleditor.YamlOperator
@@ -59,6 +61,17 @@ func AddService(w http.ResponseWriter, r *http.Request) {
 	*repository = r.PostFormValue("image")
 	*tag = r.PostFormValue("tag")
 	*replicas = r.PostFormValue("replicas")
+
+	fileName := "values-output.yaml"
+
+	writer, err := os.Create(fileName)
+	if err != nil {
+		panic("Unable to create the output file")
+	}
+	encoder := yaml.NewEncoder(writer)
+	encoder.SetIndent(2)
+	encoder.Encode(values)
+	encoder.Close()
 
 	w.Header().Add("HX-Trigger", "valuesChanged")
 	// tmpl := template.Must(template.ParseFiles("public/index.html"))

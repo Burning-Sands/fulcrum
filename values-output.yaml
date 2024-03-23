@@ -1,3 +1,14 @@
 uhc:
-    image: name
+  replicas: "3"
+  image:
+    repository: nginx
     tag: test
+  resources:
+    memory:
+      requests: 0
+      limits: 0
+  hpa:
+    enabled: false
+    replicas:
+      min: 0
+      max: 0

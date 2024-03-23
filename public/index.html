@@ -9,20 +9,13 @@
     <script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
 
 </head>
+{{ block "index" .}}
 <body class="container" hx-get="/" hx-trigger="valuesChanged from:body">
     <div class="row">
         <div class="col">
-            <h1 class="mb-4">Service declaration</h1>
-        
-            <ul class="list-group fs-5 me-5" id="service-list">
-                <li class="list-group-item bg-primary text-white">{{ . }}</li>
-            </ul>
-        </div>
-
-        <div class="col">
             <h3>Specify service options</h1>
             <form class="col" hx-post="/add-service/">
-                <div class="form-group mb-2 col-2">
+                <div class="form-group mb-2 col-1">
                     <label for="replicas">Replicas</label>
                     <select type="number" name="replicas" id="replicas-count" class="form-control input-sm">
                         <option>1</option>
@@ -35,11 +28,11 @@
                     <label for="replicas">Resoruces</label>
                     <input type="text" name="resources" id="resources" class="form-control input-sm">
                 </div> -->
-                <div class="form-group mb-2 col-2">
+                <div class="form-group mb-2 col-3">
                     <label for="replicas">Image</label>
                     <input type="text" name="image" id="image" class="form-control input-sm">
                 </div>
-                <div class="form-group mb-2">
+                <div class="form-group mb-2 col-3">
                     <label for="replicas">Tag</label>
                     <input type="text" name="tag" id="tag" class="form-control input-sm">
                 </div>
@@ -49,6 +42,13 @@
                 </button>
             </form>
         </div>
+        <div class="col">
+            <h1 class="mb-4">Service declaration</h1>
+                <div class="container">
+                    {{ . }}
+                </div>
+        </div>
     </div>
 </body>
+{{ end }}
 </html>
