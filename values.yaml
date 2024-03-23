@@ -1,10 +1,13 @@
 uhc:
   image:
-    tag: mapping-node
-    tag2: dawea
-  zmienionytest:
-    dwatest: siema
-    wyjscie: wawa
-    zmienionytest: zmienionytest
-  break:
-    trzy: dwa
+    repository: nginx
+    tag: "1.19"
+  resources:
+    memory:
+      requests: 200
+      limits: 300
+  hpa:
+    enabled: true
+    replicas:
+      min: 3
+      max: 5
