@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+  // values := handlers.NewValues()
 	// playground
 	// var valuesFile yamleditor.Values
 	// file, err := os.ReadFile("values.yaml")
@@ -18,9 +19,10 @@ func main() {
 	// fmt.Printf("%+v\n", valuesFile)
 
 	// define handlers
-	http.HandleFunc("/", handlers.DisplayNodes)
-	http.HandleFunc("/add-service/", handlers.AddService)
-
-	log.Fatal(http.ListenAndServe(":8080", nil))
+  router := http.NewServeMux() 
+	router.HandleFunc("/", handlers.DisplayNodes)
+  router.HandleFunc("/edit/", handlers.ModifyValues)
+  router.HandleFunc("/apply/", handlers.ApplyValues)
+	log.Fatal(http.ListenAndServe(":8080", router))
 
 }

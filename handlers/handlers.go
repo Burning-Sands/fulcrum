@@ -5,11 +5,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/fulcrum29/fulcrum/yamleditor"
+	// "github.com/fulcrum29/fulcrum/yamleditor"
 	"gopkg.in/yaml.v3"
 )
-
-var yamlEdit yamleditor.YamlOperator
 
 type Values struct {
 	Uhc struct {
@@ -34,12 +32,16 @@ type Values struct {
 	} `yaml:"uhc"`
 }
 
+func NewValues() *Values {
+  return &Values{}
+}
+
 var values Values
 
 func DisplayNodes(w http.ResponseWriter, r *http.Request) {
 
-	// if reflect.ValueOf(values).IsZero() {
-	// 	file, err := os.ReadFile("values.yaml")
+  // if reflect.ValueOf(values).IsZero() {
+	//	file, err := os.ReadFile("values.yaml")
 	// 	if err != nil {
 	// 		panic(err)
 	// 	}
@@ -51,7 +53,7 @@ func DisplayNodes(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, values)
 }
 
-func AddService(w http.ResponseWriter, r *http.Request) {
+func ModifyValues(w http.ResponseWriter, r *http.Request) {
 
 	var (
 		repository = &values.Uhc.Image.Repository
@@ -77,3 +79,33 @@ func AddService(w http.ResponseWriter, r *http.Request) {
 	// tmpl := template.Must(template.ParseFiles("public/index.html"))
 	// tmpl.ExecuteTemplate(w, "film-list-element", m)
 }
+
+
+func ApplyValues(w http.ResponseWriter, r *http.Request) {
+
+  fileName := "values-output.yaml"
+
+	writer, err := os.Create(fileName)
+	if err != nil {
+		panic("Unable to create the output file")
+	}
+	encoder := yaml.NewEncoder(writer)
+	encoder.SetIndent(2)
+	encoder.Encode(values)
+	encoder.Close()
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,8 +1,8 @@
 uhc:
-  replicas: "3"
+  replicas: "1"
   image:
-    repository: nginx
-    tag: test
+    repository: "123"
+    tag: "4"
   resources:
     memory:
       requests: 0

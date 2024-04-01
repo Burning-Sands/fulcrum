@@ -14,7 +14,7 @@
     <div class="row">
         <div class="col">
             <h3>Specify service options</h1>
-            <form class="col" hx-post="/add-service/">
+            <form class="col" hx-post="/edit/">
                 <div class="form-group mb-2 col-1">
                     <label for="replicas">Replicas</label>
                     <select type="number" name="replicas" id="replicas-count" class="form-control input-sm">
@@ -48,6 +48,15 @@
                     {{ . }}
                 </div>
         </div>
+      <div class="col">
+        <div>
+          <h1 class="mb-4">Apply changes</h1>
+              <button type="submit" hx-get="/apply/" class="btn btn-primary text-left">
+                <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
+                  Apply
+              </button>
+        </div>
+      </div>
     </div>
 </body>
 {{ end }}
