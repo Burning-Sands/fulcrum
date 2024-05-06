@@ -1,3 +1,4 @@
+{{ block "index" .}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,55 +10,59 @@
     <script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
 
 </head>
-{{ block "index" .}}
-<body class="container" hx-get="/" hx-trigger="valuesChanged from:body">
+<body class="container" >
     <div class="row">
-        <div class="col">
-            <h3>Specify service options</h1>
-            <form class="col" hx-post="/edit/">
-                <div class="form-group mb-2 col-1">
-                    <label for="replicas">Replicas</label>
-                    <select type="number" name="replicas" id="replicas-count" class="form-control input-sm">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                    </select>
-                </div>
-                <!-- <div class="form-group mb-2 col-4">
-                    <label for="replicas">Resoruces</label>
-                    <input type="text" name="resources" id="resources" class="form-control input-sm">
-                </div> -->
-                <div class="form-group mb-2 col-3">
-                    <label for="replicas">Image</label>
-                    <input type="text" name="image" id="image" class="form-control input-sm">
-                </div>
-                <div class="form-group mb-2 col-3">
-                    <label for="replicas">Tag</label>
-                    <input type="text" name="tag" id="tag" class="form-control input-sm">
-                </div>
-                <button type="submit" class="btn btn-primary text-left">
-                    <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
-                    Submit
-                </button>
-            </form>
+        <div id="service-options" class="col">
+          <h1>Specify service options</h1>
+            {{ template "options" . }}
         </div>
-        <div class="col">
-            <h1 class="mb-4">Service declaration</h1>
-                <div class="container">
-                    {{ . }}
-                </div>
-        </div>
-      <div class="col">
-        <div>
-          <h1 class="mb-4">Apply changes</h1>
-              <button type="submit" hx-get="/apply/" class="btn btn-primary text-left">
-                <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
-                  Apply
-              </button>
-        </div>
-      </div>
+    </div>
+    <div class="row">
+      {{ template "display-values" . }}
+    </div>
+    <div class="row">
+      <h1 class="mb-4">Apply changes</h1>
+        <button type="submit" hx-get="/apply/" class="btn btn-primary text-left">
+          <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
+            Apply
+        </button>
     </div>
 </body>
-{{ end }}
 </html>
+{{ end }}
+
+
+{{ block "options" . }}
+<form class="col" hx-post="/edit/" hx-swap="none">
+  <div class="form-group mb-2 col-1">
+    <label for="replicas">Replicas</label>
+    <select type="number" name="replicas" id="replicas-count" class="form-control input-sm">
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
+    </select>
+  </div>
+  <div class="form-group mb-2 col-3">
+    <label for="replicas">Image</label>
+    <input type="text" name="image" id="image" class="form-control input-sm">
+  </div>
+  <div class="form-group mb-2 col-3">
+    <label for="replicas">Tag</label>
+    <input type="text" name="tag" id="tag" class="form-control input-sm">
+  </div>
+  <button type="submit" class="btn btn-primary text-left">
+    <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
+    Submit
+  </button>
+</form>
+{{ end }}
+
+{{ block "display-values" . }}
+<div id="display-values" class="col">
+  <h1 class="mb-4">Service declaration</h1>
+  <div id="service-declaration" class="container" hx-get="/display-values/" hx-target="#display-values" hx-trigger="valuesChanged from:body">
+    {{ . }}
+  </div>
+</div>
+{{ end }}

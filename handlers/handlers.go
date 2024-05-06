@@ -38,19 +38,19 @@ func NewValues() *Values {
 
 var values Values
 
-func DisplayNodes(w http.ResponseWriter, r *http.Request) {
 
-  // if reflect.ValueOf(values).IsZero() {
-	//	file, err := os.ReadFile("values.yaml")
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-	// 	yaml.Unmarshal([]byte(file), &values)
-	// }
-	// fmt.Printf("%+v\n", values)
+func DisplayIndex(w http.ResponseWriter, r *http.Request) {
+
 
 	tmpl := template.Must(template.ParseFiles("public/index.html"))
-	tmpl.Execute(w, values)
+	tmpl.ExecuteTemplate(w, "index", values)
+}
+
+func DisplayValues(w http.ResponseWriter, r *http.Request) {
+
+
+	tmpl := template.Must(template.ParseFiles("public/index.html"))
+	tmpl.ExecuteTemplate(w, "display-values", values)
 }
 
 func ModifyValues(w http.ResponseWriter, r *http.Request) {
@@ -64,20 +64,7 @@ func ModifyValues(w http.ResponseWriter, r *http.Request) {
 	*tag = r.PostFormValue("tag")
 	*replicas = r.PostFormValue("replicas")
 
-	fileName := "values-output.yaml"
-
-	writer, err := os.Create(fileName)
-	if err != nil {
-		panic("Unable to create the output file")
-	}
-	encoder := yaml.NewEncoder(writer)
-	encoder.SetIndent(2)
-	encoder.Encode(values)
-	encoder.Close()
-
 	w.Header().Add("HX-Trigger", "valuesChanged")
-	// tmpl := template.Must(template.ParseFiles("public/index.html"))
-	// tmpl.ExecuteTemplate(w, "film-list-element", m)
 }
 
 

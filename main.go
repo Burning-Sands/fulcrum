@@ -20,7 +20,8 @@ func main() {
 
 	// define handlers
   router := http.NewServeMux() 
-	router.HandleFunc("/", handlers.DisplayNodes)
+	router.HandleFunc("/", handlers.DisplayIndex)
+	router.HandleFunc("/display-values/", handlers.DisplayValues)
   router.HandleFunc("/edit/", handlers.ModifyValues)
   router.HandleFunc("/apply/", handlers.ApplyValues)
 	log.Fatal(http.ListenAndServe(":8080", router))
