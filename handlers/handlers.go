@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"os"
@@ -36,51 +37,64 @@ func NewValues() *Values {
   return &Values{}
 }
 
-var values Values
+func DisplayIndex(values Values) http.Handler {
 
+  fn := func(w http.ResponseWriter, r *http.Request) {
 
-func DisplayIndex(w http.ResponseWriter, r *http.Request) {
+    fmt.Println(values)
+    tmpl := template.Must(template.ParseFiles("public/index.html"))
+    tmpl.Execute(w, values)
+  }
 
-
-	tmpl := template.Must(template.ParseFiles("public/index.html"))
-	tmpl.ExecuteTemplate(w, "index", values)
+  return http.HandlerFunc(fn)
 }
 
-func DisplayValues(w http.ResponseWriter, r *http.Request) {
+func DisplayValues(values Values) http.Handler {
 
+  fn := func(w http.ResponseWriter, r *http.Request) {
 
-	tmpl := template.Must(template.ParseFiles("public/index.html"))
-	tmpl.ExecuteTemplate(w, "display-values", values)
+    tmpl := template.Must(template.ParseFiles("public/index.html"))
+    tmpl.ExecuteTemplate(w, "display-values", values)
+  }
+  return http.HandlerFunc(fn)
 }
 
-func ModifyValues(w http.ResponseWriter, r *http.Request) {
+func (v *Values) ModifyValues() http.Handler {
 
-	var (
-		repository = &values.Uhc.Image.Repository
-		tag        = &values.Uhc.Image.Tag
-		replicas   = &values.Uhc.Replicas
-	)
-	*repository = r.PostFormValue("image")
-	*tag = r.PostFormValue("tag")
-	*replicas = r.PostFormValue("replicas")
+  fn := func(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Add("HX-Trigger", "valuesChanged")
+    var (
+      repository = &v.Uhc.Image.Repository
+      tag        = &v.Uhc.Image.Tag
+      replicas   = &v.Uhc.Replicas
+    )
+    *repository = r.PostFormValue("image")
+    *tag        = r.PostFormValue("tag")
+    *replicas   = r.PostFormValue("replicas")
+
+
+    w.Header().Add("HX-Trigger", "valuesChanged")
+  }
+  return http.HandlerFunc(fn)
 }
 
 
-func ApplyValues(w http.ResponseWriter, r *http.Request) {
+func ApplyValues(values Values) http.Handler {
 
-  fileName := "values-output.yaml"
-
-	writer, err := os.Create(fileName)
-	if err != nil {
-		panic("Unable to create the output file")
-	}
-	encoder := yaml.NewEncoder(writer)
-	encoder.SetIndent(2)
-	encoder.Encode(values)
-	encoder.Close()
-
+  fn := func(w http.ResponseWriter, r *http.Request) {
+    
+    fmt.Println(values)
+    fileName := "values-output.yaml"
+    writer, err := os.Create(fileName)
+    if err != nil {
+      panic("Unable to create the output file")
+    }
+    encoder := yaml.NewEncoder(writer)
+    encoder.SetIndent(2)
+    encoder.Encode(values)
+    encoder.Close()
+  }
+  return http.HandlerFunc(fn)
 }
 
 

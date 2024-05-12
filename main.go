@@ -18,12 +18,16 @@ func main() {
 	// yaml.Unmarshal([]byte(file), &valuesFile)
 	// fmt.Printf("%+v\n", valuesFile)
 
+  values := handlers.Values{}
+  di := handlers.DisplayIndex(values)
+  // fmt.Print(values)
+  // fs := http.FileServer(http.Dir("./view"))
 	// define handlers
-  router := http.NewServeMux() 
-	router.HandleFunc("/", handlers.DisplayIndex)
-	router.HandleFunc("/display-values/", handlers.DisplayValues)
-  router.HandleFunc("/edit/", handlers.ModifyValues)
-  router.HandleFunc("/apply/", handlers.ApplyValues)
+  router := http.NewServeMux()
+	router.Handle("/", di) 
+	router.Handle("/display-values/", handlers.DisplayValues(values))
+  router.Handle("/edit/", values.ModifyValues())
+  router.Handle("/apply/", handlers.ApplyValues(values))
 	log.Fatal(http.ListenAndServe(":8080", router))
 
 }

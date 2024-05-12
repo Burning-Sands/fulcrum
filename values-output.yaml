@@ -1,8 +1,8 @@
 uhc:
-  replicas: "4"
+  replicas: ""
   image:
-    repository: changed-image
-    tag: "1.10"
+    repository: ""
+    tag: ""
   resources:
     memory:
       requests: 0

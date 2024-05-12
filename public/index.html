@@ -1,4 +1,4 @@
-{{ block "index" .}}
+{{ block "index" .}} 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,30 +10,29 @@
     <script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
 
 </head>
-<body class="container" >
-    <div class="row">
+  <body> 
+    <div class="container">
+      <div class="row">
         <div id="service-options" class="col">
           <h1>Specify service options</h1>
-            {{ template "options" . }}
+          {{ template "options" . }}
         </div>
-    </div>
-    <div class="row">
-      {{ template "display-values" . }}
-    </div>
-    <div class="row">
-      <h1 class="mb-4">Apply changes</h1>
-        <button type="submit" hx-get="/apply/" class="btn btn-primary text-left">
-          <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
+        {{ template "display-values" . }}
+        <div class="col">
+          <h1 class="mb-4">Apply changes</h1>
+          <button type="submit" hx-get="/apply/" class="btn btn-primary text-center">
+            <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
             Apply
-        </button>
+          </button>
+        </div>
+      </div>
     </div>
-</body>
+</body
 </html>
-{{ end }}
+{{ end }} 
 
-
-{{ block "options" . }}
-<form class="col" hx-post="/edit/" hx-swap="none">
+{{ block "options" . }} 
+<form class="col" hx-get="/edit/" hx-swap="none">
   <div class="form-group mb-2 col-1">
     <label for="replicas">Replicas</label>
     <select type="number" name="replicas" id="replicas-count" class="form-control input-sm">
@@ -56,13 +55,12 @@
     Submit
   </button>
 </form>
-{{ end }}
+{{ end }} 
 
-{{ block "display-values" . }}
-<div id="display-values" class="col">
-  <h1 class="mb-4">Service declaration</h1>
-  <div id="service-declaration" class="container" hx-get="/display-values/" hx-target="#display-values" hx-trigger="valuesChanged from:body">
-    {{ . }}
-  </div>
-</div>
-{{ end }}
+<!-- <div id="display-values" class="col"> -->
+<!--   <h1 class="mb-4">Service declaration</h1> -->
+<!--   <!-- <div id="service-declaration" class="container" hx-get="/display-values/" hx-target="#display-values" hx-trigger="valuesChanged from:body"> --> -->
+<!--   <div id="service-declaration">  -->
+<!--       <object data="/static/values.txt" width="300" height="350"></object> -->
+<!--   </div> -->
+<!-- </div> -->
