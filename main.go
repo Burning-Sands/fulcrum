@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-
 	"github.com/fulcrum29/fulcrum/handlers"
 )
 
@@ -19,15 +18,15 @@ func main() {
 	// fmt.Printf("%+v\n", valuesFile)
 
   values := handlers.Values{}
-  di := handlers.DisplayIndex(values)
+  di := handlers.DisplayIndex(&values)
   // fmt.Print(values)
   // fs := http.FileServer(http.Dir("./view"))
 	// define handlers
   router := http.NewServeMux()
 	router.Handle("/", di) 
-	router.Handle("/display-values/", handlers.DisplayValues(values))
+	router.Handle("/display-values/", handlers.DisplayValues(&values))
   router.Handle("/edit/", values.ModifyValues())
-  router.Handle("/apply/", handlers.ApplyValues(values))
+  router.Handle("/apply/", handlers.ApplyValues(&values))
 	log.Fatal(http.ListenAndServe(":8080", router))
 
 }

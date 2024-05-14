@@ -37,24 +37,24 @@ func NewValues() *Values {
   return &Values{}
 }
 
-func DisplayIndex(values Values) http.Handler {
+func DisplayIndex(values *Values) http.Handler {
 
   fn := func(w http.ResponseWriter, r *http.Request) {
 
     fmt.Println(values)
     tmpl := template.Must(template.ParseFiles("public/index.html"))
-    tmpl.Execute(w, values)
+    tmpl.ExecuteTemplate(w, "index", *values)
   }
 
   return http.HandlerFunc(fn)
 }
 
-func DisplayValues(values Values) http.Handler {
+func DisplayValues(values *Values) http.Handler {
 
   fn := func(w http.ResponseWriter, r *http.Request) {
 
     tmpl := template.Must(template.ParseFiles("public/index.html"))
-    tmpl.ExecuteTemplate(w, "display-values", values)
+    tmpl.ExecuteTemplate(w, "display-values", *values)
   }
   return http.HandlerFunc(fn)
 }
@@ -79,11 +79,10 @@ func (v *Values) ModifyValues() http.Handler {
 }
 
 
-func ApplyValues(values Values) http.Handler {
+func ApplyValues(values *Values) http.Handler {
 
   fn := func(w http.ResponseWriter, r *http.Request) {
     
-    fmt.Println(values)
     fileName := "values-output.yaml"
     writer, err := os.Create(fileName)
     if err != nil {
@@ -91,7 +90,7 @@ func ApplyValues(values Values) http.Handler {
     }
     encoder := yaml.NewEncoder(writer)
     encoder.SetIndent(2)
-    encoder.Encode(values)
+    encoder.Encode(*values)
     encoder.Close()
   }
   return http.HandlerFunc(fn)
