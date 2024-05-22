@@ -1,14 +1,41 @@
-uhc:
-  replicas: "1"
-  image:
-    repository: d
-    tag: "114"
-  resources:
-    memory:
-      requests: 0
-      limits: 0
-  hpa:
+nameOverride: ""
+fullnameOverride: ""
+replicaCount: 3
+annotations: {}
+podAnnotations: {}
+image:
+  repository: test
+  tag: test
+  pullPolicy: ""
+env: []
+envFrom: []
+resources:
+  limits:
+    cpu: ""
+    memory: ""
+  requests:
+    cpu: ""
+    memory: ""
+volumeMounts: null
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms: []
+tolerations: []
+topologySpreadConstraints: []
+ports: []
+service:
+  ports: []
+metrics:
+  enabled: false
+  serviceMonitor:
     enabled: false
-    replicas:
-      min: 0
-      max: 0
+ingress: {}
+hpa:
+  enabled: false
+  minReplicas: 0
+  maxReplicas: 0
+  metrics: []
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 0

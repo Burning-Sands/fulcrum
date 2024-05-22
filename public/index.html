@@ -55,9 +55,13 @@
 </form>
 {{ end }}
 {{ block "display-values" . }}
-<div id="display-values" class="col" hx-get="/display-values/" hx-trigger="valuesChanged from:body">
+<div id="display-values" class="col" hx-get="/display-values/" hx-swap="display-values" hx-trigger="valuesChanged from:body">
   <h1 class="mb-4">Service declaration</h1>
-  {{ . }}
+  <div> 
+     Replicas: {{ .ReplicaCount }}
+       Image: {{ .Image.Repository }} 
+       Tag: {{ .Image.Tag }} 
+  </div>
 </div>
 {{ end }}
 
