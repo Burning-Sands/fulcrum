@@ -1,0 +1,9 @@
+{{ define "apply-values" }}
+<div class="col">
+  <h1 class="mb-4">Apply changes</h1>
+  <button type="submit" hx-get="/apply" hx-swap="none" class="btn btn-primary text-center">
+    <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
+    Apply
+  </button>
+</div>
+{{ end }}

@@ -1,0 +1,12 @@
+{{ define "index" }}
+<body> 
+  <div class="container">
+    <div class="row">
+      {{ template "service-options" .}}
+      {{ template "display-values" .}}
+      {{ template "apply-values" .}}
+    </div>
+  </div>
+</body>
+{{ end }}
+

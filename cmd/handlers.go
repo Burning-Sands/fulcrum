@@ -1,4 +1,4 @@
-package handlers
+package main 
 
 import (
 	"fmt"
@@ -6,8 +6,9 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-
+  "log"
 	// "github.com/fulcrum29/fulcrum/yamleditor"
+	gitlab "github.com/xanzy/go-gitlab"
 	"gopkg.in/yaml.v3"
 )
 
@@ -87,10 +88,19 @@ func NewValues() *Values {
 
 func DisplayIndex(values *Values) http.Handler {
 
+  // Declare templated files
+  templateFiles := []string{
+    "ui/html/base.html",
+    "ui/html/pages/index.html",
+    "ui/html/pages/apply-values.html",
+    "ui/html/pages/service-options.html",
+    "ui/html/pages/display-values.html",
+  }
+
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
-		tmpl := template.Must(template.ParseFiles("public/index.html"))
-		tmpl.ExecuteTemplate(w, "index", *values)
+		tmpl := template.Must(template.ParseFiles(templateFiles...))
+		tmpl.ExecuteTemplate(w, "base", *values)
 	}
 
 	return http.HandlerFunc(fn)
@@ -100,7 +110,7 @@ func DisplayValues(values *Values) http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
-		tmpl := template.Must(template.ParseFiles("public/index.html"))
+		tmpl := template.Must(template.ParseFiles("ui/html/pages/display-values.html"))
 		tmpl.ExecuteTemplate(w, "display-values", &values)
 		fmt.Println("Display", values)
 	}
@@ -131,14 +141,38 @@ func ApplyValues(values *Values) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		fileName := "values-output.yaml"
+
 		writer, err := os.Create(fileName)
+
 		if err != nil {
-			panic("Unable to create the output file")
+			log.Panic("Unable to create the output file")
 		}
+
 		encoder := yaml.NewEncoder(writer)
 		encoder.SetIndent(2)
 		encoder.Encode(*values)
 		encoder.Close()
+    
+
+		file, _:= os.ReadFile(fileName)
+    fileAsString := string(file)
+    
+
+    git, err := gitlab.NewClient("")
+    if err != nil {
+      log.Fatal(err)
+    }
+
+    cf := &gitlab.UpdateFileOptions{
+            Branch:        gitlab.Ptr("master"),
+            Content:       gitlab.Ptr(fileAsString),
+            CommitMessage: gitlab.Ptr("Adding a test file"),
+    }
+
+    _, _, err = git.RepositoryFiles.UpdateFile("fulcrum29/argoapps", fileName, cf)
+	  if err != nil {
+		  log.Print(err)
+	  }
 	}
 	return http.HandlerFunc(fn)
 }
