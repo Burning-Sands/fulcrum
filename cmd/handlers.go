@@ -3,11 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
-<<<<<<< HEAD
-	"log"
-=======
 	"log/slog"
->>>>>>> 4c2aa1f (feat: add structred logging)
 	"net/http"
 	"os"
 	"strconv"
@@ -73,11 +69,7 @@ func (app *application) ModifyValues(v *Values) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-<<<<<<< HEAD
-func ApplyValues(values *Values, gitlabToken *string) http.Handler {
-=======
-func (app *application) ApplyValues(values *Values) http.Handler {
->>>>>>> 4c2aa1f (feat: add structred logging)
+func (app *application) ApplyValues(values *Values, gitlabToken *string) http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
@@ -98,17 +90,10 @@ func (app *application) ApplyValues(values *Values) http.Handler {
 		file, _ := os.ReadFile(fileName)
 		fileAsString := string(file)
 
-<<<<<<< HEAD
 		git, err := gitlab.NewClient(*gitlabToken)
-		if err != nil {
-			log.Fatal(err)
-		}
-=======
-    git, err := gitlab.NewClient("")
     if err != nil {
 		  app.logger.Error(err.Error())
     }
->>>>>>> 4c2aa1f (feat: add structred logging)
 
 		cf := &gitlab.UpdateFileOptions{
 			Branch:        gitlab.Ptr("master"),
@@ -116,17 +101,10 @@ func (app *application) ApplyValues(values *Values) http.Handler {
 			CommitMessage: gitlab.Ptr("Adding a test file"),
 		}
 
-<<<<<<< HEAD
-		_, _, err = git.RepositoryFiles.UpdateFile("fulcrum29/argoapps", fileName, cf)
-		if err != nil {
-			log.Print(err)
-		}
-=======
     _, _, err = git.RepositoryFiles.UpdateFile("fulcrum29/argoapps", fileName, cf)
 	  if err != nil {
 		  app.logger.Error(err.Error())
 	  }
->>>>>>> 4c2aa1f (feat: add structred logging)
 	}
 	return http.HandlerFunc(fn)
 }
