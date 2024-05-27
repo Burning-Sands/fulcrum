@@ -1,12 +1,13 @@
-package main 
+package main
 
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
-  "log"
+
 	// "github.com/fulcrum29/fulcrum/yamleditor"
 	gitlab "github.com/xanzy/go-gitlab"
 	"gopkg.in/yaml.v3"
@@ -88,14 +89,14 @@ func NewValues() *Values {
 
 func DisplayIndex(values *Values) http.Handler {
 
-  // Declare templated files
-  templateFiles := []string{
-    "ui/html/base.html",
-    "ui/html/pages/index.html",
-    "ui/html/pages/apply-values.html",
-    "ui/html/pages/service-options.html",
-    "ui/html/pages/display-values.html",
-  }
+	// Declare templated files
+	templateFiles := []string{
+		"ui/html/base.html",
+		"ui/html/pages/index.html",
+		"ui/html/pages/apply-values.html",
+		"ui/html/pages/service-options.html",
+		"ui/html/pages/display-values.html",
+	}
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
@@ -136,7 +137,7 @@ func (v *Values) ModifyValues() http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-func ApplyValues(values *Values) http.Handler {
+func ApplyValues(values *Values, gitlabToken *string) http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
@@ -152,27 +153,25 @@ func ApplyValues(values *Values) http.Handler {
 		encoder.SetIndent(2)
 		encoder.Encode(*values)
 		encoder.Close()
-    
 
-		file, _:= os.ReadFile(fileName)
-    fileAsString := string(file)
-    
+		file, _ := os.ReadFile(fileName)
+		fileAsString := string(file)
 
-    git, err := gitlab.NewClient("")
-    if err != nil {
-      log.Fatal(err)
-    }
+		git, err := gitlab.NewClient(*gitlabToken)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-    cf := &gitlab.UpdateFileOptions{
-            Branch:        gitlab.Ptr("master"),
-            Content:       gitlab.Ptr(fileAsString),
-            CommitMessage: gitlab.Ptr("Adding a test file"),
-    }
+		cf := &gitlab.UpdateFileOptions{
+			Branch:        gitlab.Ptr("master"),
+			Content:       gitlab.Ptr(fileAsString),
+			CommitMessage: gitlab.Ptr("Adding a test file"),
+		}
 
-    _, _, err = git.RepositoryFiles.UpdateFile("fulcrum29/argoapps", fileName, cf)
-	  if err != nil {
-		  log.Print(err)
-	  }
+		_, _, err = git.RepositoryFiles.UpdateFile("fulcrum29/argoapps", fileName, cf)
+		if err != nil {
+			log.Print(err)
+		}
 	}
 	return http.HandlerFunc(fn)
 }
