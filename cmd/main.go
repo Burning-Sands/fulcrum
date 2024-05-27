@@ -84,30 +84,24 @@ func NewValues() *Values {
 func main() {
 
   values := NewValues()
+  // logger 
   logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
-  app := application{
-    logger: logger,
-  }
-
+  // flags
 	gitlabToken := flag.String("token", "", "Gitlab token for repo")
 	flag.Parse()
 
+  app := application{
+    logger: logger,
+    values: values,
+    gitlabToken: gitlabToken,
+  }
 
-	router := http.NewServeMux()
-	fs := http.FileServer(http.Dir("./ui/static"))
-
-	// define handlers
-  router.Handle("GET /static/", http.StripPrefix("/static", fs))
-	router.Handle("GET /{$}", app.DisplayIndex(values)) 
-  router.Handle("POST /edit", app.ModifyValues(values))
-	router.Handle("GET /display-values", app.DisplayValues(values))
-  router.Handle("GET /apply", app.ApplyValues(values, gitlabToken))
-
+	flag.Parse()
 
   // Start main handler (server)
   logger.Info("Starting server")
-  err := http.ListenAndServe(":8080", router)
+  err := http.ListenAndServe(":8080", app.routes())
 
   logger.Error(err.Error())
   os.Exit(1)

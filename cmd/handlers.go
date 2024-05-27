@@ -15,9 +15,11 @@ import (
 
 type application struct {
   logger *slog.Logger
+  values *Values
+  gitlabToken *string
 } 
 
-func (app *application) DisplayIndex(values *Values) http.Handler {
+func (app *application) DisplayIndex() http.Handler {
 
 	// Declare templated files
 	templateFiles := []string{
@@ -31,31 +33,31 @@ func (app *application) DisplayIndex(values *Values) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		tmpl := template.Must(template.ParseFiles(templateFiles...))
-		tmpl.ExecuteTemplate(w, "base", *values)
+		tmpl.ExecuteTemplate(w, "base", *app.values)
 	}
 
 	return http.HandlerFunc(fn)
 }
 
-func (app *application) DisplayValues(values *Values) http.Handler {
+func (app *application) DisplayValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		tmpl := template.Must(template.ParseFiles("ui/html/pages/display-values.html"))
-		tmpl.ExecuteTemplate(w, "display-values", &values)
+		tmpl.ExecuteTemplate(w, "display-values", *app.values)
     app.logger.Info("Display values")
 	}
 	return http.HandlerFunc(fn)
 }
 
-func (app *application) ModifyValues(v *Values) http.Handler {
+func (app *application) ModifyValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		var (
-			repository = &v.Image.Repository
-			tag        = &v.Image.Tag
-			replicas   = &v.ReplicaCount
+			repository = &app.values.Image.Repository
+			tag        = &app.values.Image.Tag
+			replicas   = &app.values.ReplicaCount
 		)
 		*repository = r.PostFormValue("image")
 		*tag = r.PostFormValue("tag")
@@ -67,7 +69,7 @@ func (app *application) ModifyValues(v *Values) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-func (app *application) ApplyValues(values *Values, gitlabToken *string) http.Handler {
+func (app *application) ApplyValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
@@ -82,13 +84,13 @@ func (app *application) ApplyValues(values *Values, gitlabToken *string) http.Ha
 
 		encoder := yaml.NewEncoder(writer)
 		encoder.SetIndent(2)
-		encoder.Encode(*values)
+		encoder.Encode(*app.values)
 		encoder.Close()
 
 		file, _ := os.ReadFile(fileName)
 		fileAsString := string(file)
 
-		git, err := gitlab.NewClient(*gitlabToken)
+		git, err := gitlab.NewClient(*app.gitlabToken)
     if err != nil {
 			app.serverError(w, r, err)
     }
