@@ -3,7 +3,11 @@ package main
 import (
 	"fmt"
 	"html/template"
+<<<<<<< HEAD
 	"log"
+=======
+	"log/slog"
+>>>>>>> 4c2aa1f (feat: add structred logging)
 	"net/http"
 	"os"
 	"strconv"
@@ -13,81 +17,13 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type Values struct {
-	NameOverride     string `yaml:"nameOverride"`
-	FullnameOverride string `yaml:"fullnameOverride"`
-	ReplicaCount     int    `yaml:"replicaCount"`
-	Annotations      struct {
-	} `yaml:"annotations"`
-	PodAnnotations struct {
-	} `yaml:"podAnnotations"`
-	Image struct {
-		Repository string `yaml:"repository"`
-		Tag        string `yaml:"tag"`
-		PullPolicy string `yaml:"pullPolicy"`
-	} `yaml:"image"`
-	Env       []interface{} `yaml:"env"`
-	EnvFrom   []interface{} `yaml:"envFrom"`
-	Resources struct {
-		Limits struct {
-			CPU    string `yaml:"cpu"`
-			Memory string `yaml:"memory"`
-		} `yaml:"limits"`
-		Requests struct {
-			CPU    string `yaml:"cpu"`
-			Memory string `yaml:"memory"`
-		} `yaml:"requests"`
-	} `yaml:"resources"`
-	VolumeMounts interface{} `yaml:"volumeMounts"`
-	Affinity     struct {
-		NodeAffinity struct {
-			RequiredDuringSchedulingIgnoredDuringExecution struct {
-				NodeSelectorTerms []struct {
-					MatchExpressions []struct {
-						Key      string   `yaml:"key"`
-						Operator string   `yaml:"operator"`
-						Values   []string `yaml:"values"`
-					} `yaml:"matchExpressions"`
-				} `yaml:"nodeSelectorTerms"`
-			} `yaml:"requiredDuringSchedulingIgnoredDuringExecution"`
-		} `yaml:"nodeAffinity"`
-	} `yaml:"affinity"`
-	Tolerations               []interface{} `yaml:"tolerations"`
-	TopologySpreadConstraints []interface{} `yaml:"topologySpreadConstraints"`
-	Ports                     []interface{} `yaml:"ports"`
-	Service                   struct {
-		Ports []struct {
-			Name       string `yaml:"name"`
-			TargetPort string `yaml:"targetPort"`
-			Protocol   string `yaml:"protocol"`
-			Port       int    `yaml:"port"`
-		} `yaml:"ports"`
-	} `yaml:"service"`
-	Metrics struct {
-		Enabled        bool `yaml:"enabled"`
-		ServiceMonitor struct {
-			Enabled bool `yaml:"enabled"`
-		} `yaml:"serviceMonitor"`
-	} `yaml:"metrics"`
-	Ingress struct {
-	} `yaml:"ingress"`
-	Hpa struct {
-		Enabled     bool          `yaml:"enabled"`
-		MinReplicas int           `yaml:"minReplicas"`
-		MaxReplicas int           `yaml:"maxReplicas"`
-		Metrics     []interface{} `yaml:"metrics"`
-	} `yaml:"hpa"`
-	PodDisruptionBudget struct {
-		Enabled      bool `yaml:"enabled"`
-		MinAvailable int  `yaml:"minAvailable"`
-	} `yaml:"podDisruptionBudget"`
-}
 
-func NewValues() *Values {
-	return &Values{}
-}
+type application struct {
+  logger *slog.Logger
+} 
 
-func DisplayIndex(values *Values) http.Handler {
+
+func (app *application) DisplayIndex(values *Values) http.Handler {
 
 	// Declare templated files
 	templateFiles := []string{
@@ -107,7 +43,7 @@ func DisplayIndex(values *Values) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-func DisplayValues(values *Values) http.Handler {
+func (app *application) DisplayValues(values *Values) http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
@@ -118,7 +54,7 @@ func DisplayValues(values *Values) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-func (v *Values) ModifyValues() http.Handler {
+func (app *application) ModifyValues(v *Values) http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
@@ -137,7 +73,11 @@ func (v *Values) ModifyValues() http.Handler {
 	return http.HandlerFunc(fn)
 }
 
+<<<<<<< HEAD
 func ApplyValues(values *Values, gitlabToken *string) http.Handler {
+=======
+func (app *application) ApplyValues(values *Values) http.Handler {
+>>>>>>> 4c2aa1f (feat: add structred logging)
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
@@ -146,7 +86,8 @@ func ApplyValues(values *Values, gitlabToken *string) http.Handler {
 		writer, err := os.Create(fileName)
 
 		if err != nil {
-			log.Panic("Unable to create the output file")
+			app.logger.Error("Unable to create the output file")
+      os.Exit(1)
 		}
 
 		encoder := yaml.NewEncoder(writer)
@@ -157,10 +98,17 @@ func ApplyValues(values *Values, gitlabToken *string) http.Handler {
 		file, _ := os.ReadFile(fileName)
 		fileAsString := string(file)
 
+<<<<<<< HEAD
 		git, err := gitlab.NewClient(*gitlabToken)
 		if err != nil {
 			log.Fatal(err)
 		}
+=======
+    git, err := gitlab.NewClient("")
+    if err != nil {
+		  app.logger.Error(err.Error())
+    }
+>>>>>>> 4c2aa1f (feat: add structred logging)
 
 		cf := &gitlab.UpdateFileOptions{
 			Branch:        gitlab.Ptr("master"),
@@ -168,10 +116,17 @@ func ApplyValues(values *Values, gitlabToken *string) http.Handler {
 			CommitMessage: gitlab.Ptr("Adding a test file"),
 		}
 
+<<<<<<< HEAD
 		_, _, err = git.RepositoryFiles.UpdateFile("fulcrum29/argoapps", fileName, cf)
 		if err != nil {
 			log.Print(err)
 		}
+=======
+    _, _, err = git.RepositoryFiles.UpdateFile("fulcrum29/argoapps", fileName, cf)
+	  if err != nil {
+		  app.logger.Error(err.Error())
+	  }
+>>>>>>> 4c2aa1f (feat: add structred logging)
 	}
 	return http.HandlerFunc(fn)
 }
