@@ -1,0 +1,21 @@
+// TODO
+// package main
+//
+// import (
+//   "net/http"
+// )
+//
+// func (app *application) routes() *http.ServeMux {
+//
+// 	router := http.NewServeMux()
+// 	fs := http.FileServer(http.Dir("./ui/static"))
+//
+// 	// define handlers
+//   router.Handle("GET /static/", http.StripPrefix("/static", fs))
+// 	router.Handle("GET /{$}", app.DisplayIndex(values)) 
+//   router.Handle("POST /edit", app.ModifyValues(values))
+// 	router.Handle("GET /display-values", app.DisplayValues(values))
+//   router.Handle("GET /apply", app.ApplyValues(values, gitlabToken))
+//   
+//   return router
+// }

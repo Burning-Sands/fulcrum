@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"log/slog"
 	"net/http"
@@ -17,7 +16,6 @@ import (
 type application struct {
   logger *slog.Logger
 } 
-
 
 func (app *application) DisplayIndex(values *Values) http.Handler {
 
@@ -45,7 +43,7 @@ func (app *application) DisplayValues(values *Values) http.Handler {
 
 		tmpl := template.Must(template.ParseFiles("ui/html/pages/display-values.html"))
 		tmpl.ExecuteTemplate(w, "display-values", &values)
-		fmt.Println("Display", values)
+    app.logger.Info("Display values")
 	}
 	return http.HandlerFunc(fn)
 }
@@ -63,7 +61,7 @@ func (app *application) ModifyValues(v *Values) http.Handler {
 		*tag = r.PostFormValue("tag")
 		*replicas, _ = strconv.Atoi(r.PostFormValue("replicas"))
 
-		fmt.Println("Modify", v)
+    app.logger.Info("Modify values")
 		w.Header().Add("HX-Trigger", "valuesChanged")
 	}
 	return http.HandlerFunc(fn)
@@ -78,7 +76,7 @@ func (app *application) ApplyValues(values *Values, gitlabToken *string) http.Ha
 		writer, err := os.Create(fileName)
 
 		if err != nil {
-			app.logger.Error("Unable to create the output file")
+			app.serverError(w, r, err)
       os.Exit(1)
 		}
 
@@ -92,7 +90,7 @@ func (app *application) ApplyValues(values *Values, gitlabToken *string) http.Ha
 
 		git, err := gitlab.NewClient(*gitlabToken)
     if err != nil {
-		  app.logger.Error(err.Error())
+			app.serverError(w, r, err)
     }
 
 		cf := &gitlab.UpdateFileOptions{
@@ -103,7 +101,7 @@ func (app *application) ApplyValues(values *Values, gitlabToken *string) http.Ha
 
     _, _, err = git.RepositoryFiles.UpdateFile("fulcrum29/argoapps", fileName, cf)
 	  if err != nil {
-		  app.logger.Error(err.Error())
+			app.serverError(w, r, err)
 	  }
 	}
 	return http.HandlerFunc(fn)

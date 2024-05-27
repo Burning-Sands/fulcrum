@@ -102,7 +102,7 @@ func main() {
 	router.Handle("GET /{$}", app.DisplayIndex(values)) 
   router.Handle("POST /edit", app.ModifyValues(values))
 	router.Handle("GET /display-values", app.DisplayValues(values))
-  router.Handle("GET /apply", app.ApplyValues(values))
+  router.Handle("GET /apply", app.ApplyValues(values, gitlabToken))
 
 
   // Start main handler (server)

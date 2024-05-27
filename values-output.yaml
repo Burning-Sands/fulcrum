@@ -1,11 +1,11 @@
 nameOverride: ""
 fullnameOverride: ""
-replicaCount: 3
+replicaCount: 1
 annotations: {}
 podAnnotations: {}
 image:
-  repository: awda
-  tag: awdawdaaw
+  repository: nginx
+  tag: "1.16"
   pullPolicy: ""
 env: []
 envFrom: []
