@@ -12,12 +12,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-
 type application struct {
-  logger *slog.Logger
-  values *Values
-  gitlabToken *string
-} 
+	logger      *slog.Logger
+	values      *Values
+	gitlabToken *string
+}
 
 func (app *application) DisplayIndex() http.Handler {
 
@@ -45,7 +44,7 @@ func (app *application) DisplayValues() http.Handler {
 
 		tmpl := template.Must(template.ParseFiles("ui/html/pages/display-values.html"))
 		tmpl.ExecuteTemplate(w, "display-values", *app.values)
-    app.logger.Info("Display values")
+		app.logger.Info("Display values")
 	}
 	return http.HandlerFunc(fn)
 }
@@ -55,15 +54,18 @@ func (app *application) ModifyValues() http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		var (
-			repository = &app.values.Image.Repository
-			tag        = &app.values.Image.Tag
-			replicas   = &app.values.ReplicaCount
+			repository        = &app.values.Image.Repository
+			tag               = &app.values.Image.Tag
+			replicas          = &app.values.ReplicaCount
+			resourcesLimits   = &app.values.Resources.Limits
+			resourcesRequests = &app.values.Resources.Requests
+			// hpa        = &app.values.Hpa.Enabled
 		)
 		*repository = r.PostFormValue("image")
 		*tag = r.PostFormValue("tag")
 		*replicas, _ = strconv.Atoi(r.PostFormValue("replicas"))
 
-    app.logger.Info("Modify values")
+		app.logger.Info("Modify values")
 		w.Header().Add("HX-Trigger", "valuesChanged")
 	}
 	return http.HandlerFunc(fn)
@@ -79,7 +81,7 @@ func (app *application) ApplyValues() http.Handler {
 
 		if err != nil {
 			app.serverError(w, r, err)
-      os.Exit(1)
+			os.Exit(1)
 		}
 
 		encoder := yaml.NewEncoder(writer)
@@ -91,9 +93,9 @@ func (app *application) ApplyValues() http.Handler {
 		fileAsString := string(file)
 
 		git, err := gitlab.NewClient(*app.gitlabToken)
-    if err != nil {
+		if err != nil {
 			app.serverError(w, r, err)
-    }
+		}
 
 		cf := &gitlab.UpdateFileOptions{
 			Branch:        gitlab.Ptr("master"),
@@ -101,10 +103,10 @@ func (app *application) ApplyValues() http.Handler {
 			CommitMessage: gitlab.Ptr("Adding a test file"),
 		}
 
-    _, _, err = git.RepositoryFiles.UpdateFile("fulcrum29/argoapps", fileName, cf)
-	  if err != nil {
+		_, _, err = git.RepositoryFiles.UpdateFile("fulcrum29/argoapps", fileName, cf)
+		if err != nil {
 			app.serverError(w, r, err)
-	  }
+		}
 	}
 	return http.HandlerFunc(fn)
 }

@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log/slog"
 	"net/http"
-  "os"
+	"os"
 )
 
 type Values struct {
@@ -46,10 +46,9 @@ type Values struct {
 			} `yaml:"requiredDuringSchedulingIgnoredDuringExecution"`
 		} `yaml:"nodeAffinity"`
 	} `yaml:"affinity"`
-	Tolerations               []interface{} `yaml:"tolerations"`
-	TopologySpreadConstraints []interface{} `yaml:"topologySpreadConstraints"`
-	Ports                     []interface{} `yaml:"ports"`
-	Service                   struct {
+	Tolerations []interface{} `yaml:"tolerations"`
+	Ports       []interface{} `yaml:"ports"`
+	Service     struct {
 		Ports []struct {
 			Name       string `yaml:"name"`
 			TargetPort string `yaml:"targetPort"`
@@ -71,10 +70,6 @@ type Values struct {
 		MaxReplicas int           `yaml:"maxReplicas"`
 		Metrics     []interface{} `yaml:"metrics"`
 	} `yaml:"hpa"`
-	PodDisruptionBudget struct {
-		Enabled      bool `yaml:"enabled"`
-		MinAvailable int  `yaml:"minAvailable"`
-	} `yaml:"podDisruptionBudget"`
 }
 
 func NewValues() *Values {
@@ -83,27 +78,27 @@ func NewValues() *Values {
 
 func main() {
 
-  values := NewValues()
-  // logger 
-  logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	values := NewValues()
+	// logger
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
-  // flags
+	// flags
 	gitlabToken := flag.String("token", "", "Gitlab token for repo")
 	flag.Parse()
 
-  app := application{
-    logger: logger,
-    values: values,
-    gitlabToken: gitlabToken,
-  }
+	app := application{
+		logger:      logger,
+		values:      values,
+		gitlabToken: gitlabToken,
+	}
 
 	flag.Parse()
 
-  // Start main handler (server)
-  logger.Info("Starting server")
-  err := http.ListenAndServe(":8080", app.routes())
+	// Start main handler (server)
+	logger.Info("Starting server")
+	err := http.ListenAndServe(":8080", app.routes())
 
-  logger.Error(err.Error())
-  os.Exit(1)
+	logger.Error(err.Error())
+	os.Exit(1)
 
 }

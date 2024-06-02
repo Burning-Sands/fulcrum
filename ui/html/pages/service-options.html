@@ -3,21 +3,32 @@
   <h1>Specify service options</h1>
     <form class="col" hx-post="/edit" hx-swap="none">
       <div class="form-group mb-2 col-8">
-        <label for="replicas">Replicas</label>
-        <input type="range" name="replicas" id="replicas-count" list="replica-number" class="form-range" min="0" max="8" value="0">
-
-      <datalist id="replica-number">
-        <option value="[object Set]"></option>
-      </datalist>
-        <span class="range-view">0</span>
+        <fieldset>
+        <legend> Basic options: </legend> 
+          <label for="replicas">Replicas</label>
+          <input type="range" name="replicas" id="replicas-count" list="replica-number" class="form-range" min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
+        <output name="replicas-output" for="replicas-number">0</output><br>
+          <label class="mb-1" for="image">Image</label>
+          <input type="text" name="image" id="image" class="form-control input-sm">
+          <label class="mb-1" for="tag">Tag</label>
+          <input type="text" name="tag" id="tag" class="form-control input-sm">
+        </fieldset>
       </div>
-      <div class="form-group mb-2 col-3">
-        <label for="replicas">Image</label>
-        <input type="text" name="image" id="image" class="form-control input-sm">
-      </div>
-      <div class="form-group mb-2 col-3">
-        <label for="replicas">Tag</label>
-        <input type="text" name="tag" id="tag" class="form-control input-sm">
+      <div class="form-group mb-2 col-8">
+        <fieldset>
+        <legend> Requests: </legend> 
+          <label for="cpu-requests">CPU</label>
+          <input type="text" name="cpu-requests" id="cpu-requests" class="form-control input-sm">
+          <label for="memory-requests">Memory</label>
+          <input type="text" name="memory-requests" id="memory-requests" class="form-control input-sm">
+        </fieldset>
+        <fieldset>
+        <legend> Limits: </legend> 
+          <label for="cpu-limits">CPU</label>
+          <input type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="100m">
+          <label for="memory-limits">Memory</label>
+          <input type="text" name="memory-limits" id="memory-limits" class="form-control input-sm">
+        </fieldset>
       </div>
       <button type="submit" class="btn btn-primary text-left" >
         <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
