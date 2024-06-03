@@ -4,25 +4,24 @@ replicaCount: 1
 annotations: {}
 podAnnotations: {}
 image:
-  repository: nginx
-  tag: "1.16"
+  repository: test
+  tag: test
   pullPolicy: ""
 env: []
 envFrom: []
 resources:
   limits:
-    cpu: ""
-    memory: ""
+    cpu: 150m1231
+    memory: "412"
   requests:
-    cpu: ""
-    memory: ""
+    cpu: 100m
+    memory: 200Mi
 volumeMounts: null
 affinity:
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms: []
 tolerations: []
-topologySpreadConstraints: []
 ports: []
 service:
   ports: []
@@ -36,6 +35,3 @@ hpa:
   minReplicas: 0
   maxReplicas: 0
   metrics: []
-podDisruptionBudget:
-  enabled: false
-  minAvailable: 0

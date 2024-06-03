@@ -61,9 +61,13 @@ func (app *application) ModifyValues() http.Handler {
 			resourcesRequests = &app.values.Resources.Requests
 			// hpa        = &app.values.Hpa.Enabled
 		)
-		*repository = r.PostFormValue("image")
+		*repository = r.PostFormValue("repository")
 		*tag = r.PostFormValue("tag")
 		*replicas, _ = strconv.Atoi(r.PostFormValue("replicas"))
+		resourcesLimits.CPU = r.PostFormValue("cpu-limits")
+		resourcesLimits.Memory = r.PostFormValue("memory-limits")
+		resourcesRequests.CPU = r.PostFormValue("cpu-requests")
+		resourcesRequests.Memory = r.PostFormValue("memory-requests")
 
 		app.logger.Info("Modify values")
 		w.Header().Add("HX-Trigger", "valuesChanged")

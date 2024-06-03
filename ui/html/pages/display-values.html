@@ -3,9 +3,18 @@
 <div id="display-values" class="col" hx-get="/display-values" hx-swap="display-values" hx-trigger="valuesChanged from:body">
   <h1 class="mb-4">Service declaration</h1>
   <pre class="prism-code language-yml"><code>---
-Replicas: {{ .ReplicaCount }} 
-  Image: {{ .Image.Repository }} # Empty
-  Tag: {{ .Image.Tag }} 
+uhc:
+  replicaCount: {{ .ReplicaCount }} 
+  image: 
+    repository: {{ .Image.Repository }} 
+    tag: {{ .Image.Tag }} 
+  resources:
+    requests:
+      cpu: {{ .Resources.Requests.CPU }}
+      memory: {{ .Resources.Requests.Memory }}
+    limits:
+      cpu: {{ .Resources.Limits.CPU }}
+      memory: {{ .Resources.Limits.Memory }}
 </code></pre>
 </div>
 {{ end }}

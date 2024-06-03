@@ -1,37 +1,41 @@
 {{ define "service-options" }}
-<div id="service-options" class="col">
-  <h1>Specify service options</h1>
+<div id="service-options" class="col bg-light rounded-1 text-dark" data-bs-theme="light">
     <form class="col" hx-post="/edit" hx-swap="none">
       <div class="form-group mb-2 col-8">
         <fieldset>
-        <legend> Basic options: </legend> 
-          <label for="replicas">Replicas</label>
-          <input type="range" name="replicas" id="replicas-count" list="replica-number" class="form-range" min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
-        <output name="replicas-output" for="replicas-number">0</output><br>
-          <label class="mb-1" for="image">Image</label>
-          <input type="text" name="image" id="image" class="form-control input-sm">
+        <legend class="fw-semibold"> Basic options: </legend> 
+          <div class="ms-2">
+          <label class="mb-1" for="repository">Repository</label>
+          <input type="text" name="repository" id="repository" class="form-control input-sm">
           <label class="mb-1" for="tag">Tag</label>
           <input type="text" name="tag" id="tag" class="form-control input-sm">
+          <label for="replicas">Replicas</label>
+          <input type="range" name="replicas" id="replicas-count" list="replica-number" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
+        <output name="replicas-output" for="replicas-number">0</output><br>
+          </div>
         </fieldset>
       </div>
       <div class="form-group mb-2 col-8">
         <fieldset>
         <legend> Requests: </legend> 
+          <div class="ms-2">
           <label for="cpu-requests">CPU</label>
           <input type="text" name="cpu-requests" id="cpu-requests" class="form-control input-sm">
           <label for="memory-requests">Memory</label>
           <input type="text" name="memory-requests" id="memory-requests" class="form-control input-sm">
+          </div>
         </fieldset>
         <fieldset>
         <legend> Limits: </legend> 
+          <div class="ms-2">
           <label for="cpu-limits">CPU</label>
           <input type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="100m">
           <label for="memory-limits">Memory</label>
           <input type="text" name="memory-limits" id="memory-limits" class="form-control input-sm">
+          </div>
         </fieldset>
       </div>
-      <button type="submit" class="btn btn-primary text-left" >
-        <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
+      <button type="submit" class="mt-2 btn btn-outline-dark">
         Submit
       </button>
     </form>
