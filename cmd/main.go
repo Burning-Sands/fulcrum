@@ -84,6 +84,10 @@ func main() {
 
 	// flags
 	gitlabToken := flag.String("token", "", "Gitlab token for repo")
+	if *gitlabToken == "" {
+		logger.Error("Missing flag gitlabToken")
+		os.Exit(1)
+	}
 	flag.Parse()
 
 	app := application{
@@ -91,8 +95,6 @@ func main() {
 		values:      values,
 		gitlabToken: gitlabToken,
 	}
-
-	flag.Parse()
 
 	// Start main handler (server)
 	logger.Info("Starting server")

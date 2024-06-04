@@ -61,13 +61,19 @@ func (app *application) ModifyValues() http.Handler {
 			resourcesRequests = &app.values.Resources.Requests
 			// hpa        = &app.values.Hpa.Enabled
 		)
-		*repository = r.PostFormValue("repository")
-		*tag = r.PostFormValue("tag")
-		*replicas, _ = strconv.Atoi(r.PostFormValue("replicas"))
-		resourcesLimits.CPU = r.PostFormValue("cpu-limits")
-		resourcesLimits.Memory = r.PostFormValue("memory-limits")
-		resourcesRequests.CPU = r.PostFormValue("cpu-requests")
-		resourcesRequests.Memory = r.PostFormValue("memory-requests")
+		err := r.ParseForm()
+		if err != nil {
+			app.clientError(w, http.StatusBadRequest)
+			return
+		}
+
+		*repository = r.PostForm.Get("repository")
+		*tag = r.PostForm.Get("tag")
+		*replicas, _ = strconv.Atoi(r.PostForm.Get("replicas"))
+		resourcesLimits.CPU = r.PostForm.Get("cpu-limits")
+		resourcesLimits.Memory = r.PostForm.Get("memory-limits")
+		resourcesRequests.CPU = r.PostForm.Get("cpu-requests")
+		resourcesRequests.Memory = r.PostForm.Get("memory-requests")
 
 		app.logger.Info("Modify values")
 		w.Header().Add("HX-Trigger", "valuesChanged")
@@ -110,6 +116,7 @@ func (app *application) ApplyValues() http.Handler {
 		_, _, err = git.RepositoryFiles.UpdateFile("fulcrum29/argoapps", fileName, cf)
 		if err != nil {
 			app.serverError(w, r, err)
+			app.clientError(w, http.StatusBadRequest)
 		}
 	}
 	return http.HandlerFunc(fn)
