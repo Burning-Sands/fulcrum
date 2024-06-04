@@ -1,6 +1,6 @@
-{{ define "service-options" }}
-<div id="service-options" class="col bg-light rounded-1 text-dark" data-bs-theme="light">
-    <form class="col" hx-post="/edit" hx-swap="none">
+{{ define "basic" }}
+<div id="basic-options">
+    <form class="col" hx-post="/edit" hx-trigger="change delay:100ms" hx-swap="none">
       <div class="form-group mb-2 col-8">
         <fieldset>
         <legend class="fw-semibold"> Basic options: </legend> 
@@ -15,6 +15,16 @@
           </div>
         </fieldset>
       </div>
+      <button type="submit" class="mt-2 mb-4 btn btn-outline-dark">
+        Submit
+      </button>
+    </form>
+</div>
+{{ end }}
+
+{{ define "resources" }}
+<div id="resources-option">
+  <form class="col" hx-post="/edit" hx-trigger="change delay:100ms" hx-swap="none">
       <div class="form-group mb-2 col-8">
         <fieldset>
         <legend> Requests: </legend> 
@@ -27,7 +37,7 @@
         </fieldset>
         <fieldset>
         <legend> Limits: </legend> 
-          <div class="ms-2">
+          <div class="ms-2 mb-2">
           <label for="cpu-limits">CPU</label>
           <input type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="100m">
           <label for="memory-limits">Memory</label>
@@ -35,9 +45,6 @@
           </div>
         </fieldset>
       </div>
-      <button type="submit" class="mt-2 btn btn-outline-dark">
-        Submit
-      </button>
-    </form>
+  </form>
 </div>
 {{ end }}

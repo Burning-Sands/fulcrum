@@ -18,7 +18,7 @@ type application struct {
 	gitlabToken *string
 }
 
-func (app *application) DisplayIndex() http.Handler {
+func (a *application) DisplayIndex() http.Handler {
 
 	// Declare templated files
 	templateFiles := []string{
@@ -32,56 +32,70 @@ func (app *application) DisplayIndex() http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		tmpl := template.Must(template.ParseFiles(templateFiles...))
-		tmpl.ExecuteTemplate(w, "base", *app.values)
+		tmpl.ExecuteTemplate(w, "base", *a.values)
 	}
 
 	return http.HandlerFunc(fn)
 }
 
-func (app *application) DisplayValues() http.Handler {
+func (a *application) DisplayValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		tmpl := template.Must(template.ParseFiles("ui/html/pages/display-values.html"))
-		tmpl.ExecuteTemplate(w, "display-values", *app.values)
-		app.logger.Info("Display values")
+		tmpl.ExecuteTemplate(w, "display-values", *a.values)
+		a.logger.Info("Display values")
 	}
 	return http.HandlerFunc(fn)
 }
 
-func (app *application) ModifyValues() http.Handler {
+func (a *application) handlerDisplayOptions() http.Handler {
+
+	fn := func(w http.ResponseWriter, r *http.Request) {
+
+		pathValue := r.PathValue("option")
+		tmpl := template.Must(template.ParseFiles("ui/html/pages/service-options.html"))
+		tmpl.ExecuteTemplate(w, pathValue, nil)
+		a.logger.Info("Display options")
+
+	}
+	return http.HandlerFunc(fn)
+}
+
+func (a *application) ModifyValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		var (
-			repository        = &app.values.Image.Repository
-			tag               = &app.values.Image.Tag
-			replicas          = &app.values.ReplicaCount
-			resourcesLimits   = &app.values.Resources.Limits
-			resourcesRequests = &app.values.Resources.Requests
-			// hpa        = &app.values.Hpa.Enabled
+			repository = &a.values.Image.Repository
+			tag        = &a.values.Image.Tag
+			replicas   = &a.values.ReplicaCount
+			limits     = &a.values.Resources.Limits
+			requests   = &a.values.Resources.Requests
+			// hpa        = &a.values.Hpa.Enabled
 		)
 		err := r.ParseForm()
 		if err != nil {
-			app.clientError(w, http.StatusBadRequest)
+			a.clientError(w, http.StatusBadRequest)
 			return
 		}
 
 		*repository = r.PostForm.Get("repository")
 		*tag = r.PostForm.Get("tag")
 		*replicas, _ = strconv.Atoi(r.PostForm.Get("replicas"))
-		resourcesLimits.CPU = r.PostForm.Get("cpu-limits")
-		resourcesLimits.Memory = r.PostForm.Get("memory-limits")
-		resourcesRequests.CPU = r.PostForm.Get("cpu-requests")
-		resourcesRequests.Memory = r.PostForm.Get("memory-requests")
+		limits.CPU = r.PostForm.Get("cpu-limits")
+		limits.Memory = r.PostForm.Get("memory-limits")
+		requests.CPU = r.PostForm.Get("cpu-requests")
+		requests.Memory = r.PostForm.Get("memory-requests")
+		// *hpa = r.PostForm.Get("hpa-enabled")
 
-		app.logger.Info("Modify values")
+		a.logger.Info("Modify values")
 		w.Header().Add("HX-Trigger", "valuesChanged")
 	}
 	return http.HandlerFunc(fn)
 }
 
-func (app *application) ApplyValues() http.Handler {
+func (a *application) ApplyValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
@@ -90,21 +104,21 @@ func (app *application) ApplyValues() http.Handler {
 		writer, err := os.Create(fileName)
 
 		if err != nil {
-			app.serverError(w, r, err)
+			a.serverError(w, r, err)
 			os.Exit(1)
 		}
 
 		encoder := yaml.NewEncoder(writer)
 		encoder.SetIndent(2)
-		encoder.Encode(*app.values)
+		encoder.Encode(*a.values)
 		encoder.Close()
 
 		file, _ := os.ReadFile(fileName)
 		fileAsString := string(file)
 
-		git, err := gitlab.NewClient(*app.gitlabToken)
+		git, err := gitlab.NewClient(*a.gitlabToken)
 		if err != nil {
-			app.serverError(w, r, err)
+			a.serverError(w, r, err)
 		}
 
 		cf := &gitlab.UpdateFileOptions{
@@ -115,8 +129,8 @@ func (app *application) ApplyValues() http.Handler {
 
 		_, _, err = git.RepositoryFiles.UpdateFile("fulcrum29/argoapps", fileName, cf)
 		if err != nil {
-			app.serverError(w, r, err)
-			app.clientError(w, http.StatusBadRequest)
+			a.serverError(w, r, err)
+			a.clientError(w, http.StatusBadRequest)
 		}
 	}
 	return http.HandlerFunc(fn)
