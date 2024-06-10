@@ -1,17 +1,17 @@
 package main
 
 type Values struct {
-	NameOverride     string `yaml:"nameOverride"`
-	FullnameOverride string `yaml:"fullnameOverride"`
-	ReplicaCount     int    `yaml:"replicaCount"`
+	NameOverride     string `yaml:"nameOverride,omitempty"`
+	FullnameOverride string `yaml:"fullnameOverride,omitempty"`
+	ReplicaCount     int    `yaml:"replicaCount,omitempty"`
 	Annotations      struct {
-	} `yaml:"annotations"`
+	} `yaml:"annotations,omitempty"`
 	PodAnnotations struct {
-	} `yaml:"podAnnotations"`
+	} `yaml:"podAnnotations,omitempty"`
 	Image struct {
-		Repository string `yaml:"repository"`
-		Tag        string `yaml:"tag"`
-		PullPolicy string `yaml:"pullPolicy"`
+		Repository string `yaml:"repository,omitempty"`
+		Tag        string `yaml:"tag,omitempty"`
+		PullPolicy string `yaml:"pullPolicy,omitempty"`
 	} `yaml:"image"`
 	Env       []interface{} `yaml:"env"`
 	EnvFrom   []interface{} `yaml:"envFrom"`
@@ -25,8 +25,7 @@ type Values struct {
 			Memory string `yaml:"memory"`
 		} `yaml:"requests"`
 	} `yaml:"resources"`
-	VolumeMounts interface{} `yaml:"volumeMounts"`
-	Affinity     struct {
+	Affinity struct {
 		NodeAffinity struct {
 			RequiredDuringSchedulingIgnoredDuringExecution struct {
 				NodeSelectorTerms []struct {

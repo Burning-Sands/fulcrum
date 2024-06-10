@@ -11,10 +11,10 @@ func (app *application) routes() *http.ServeMux {
 
 	// define handlers
 	router.Handle("GET /static/", http.StripPrefix("/static", fs))
-	router.Handle("GET /{$}", app.DisplayIndex())
+	router.Handle("GET /{$}", app.handlerDisplayIndex())
 	router.Handle("POST /edit/{option}", app.handlerModifyValues())
-	router.Handle("GET /display-values", app.DisplayValues())
-	router.Handle("GET /apply", app.ApplyValues())
+	router.Handle("GET /display-values", app.handlerDisplayValues())
+	router.Handle("GET /apply", app.handlerApplyValues())
 	router.Handle("GET /service-options/{option}", app.handlerDisplayOptions())
 
 	return router

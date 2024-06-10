@@ -1,22 +1,16 @@
-nameOverride: ""
-fullnameOverride: ""
-replicaCount: 0
-annotations: {}
-podAnnotations: {}
+replicaCount: 2
 image:
-  repository: ""
-  tag: ""
-  pullPolicy: ""
+  repository: nginx
+  tag: "1.10"
 env: []
 envFrom: []
 resources:
   limits:
-    cpu: 100m
-    memory: ""
+    cpu: "100"
+    memory: 200Mi
   requests:
     cpu: 100m
     memory: awdawd
-volumeMounts: null
 affinity:
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:

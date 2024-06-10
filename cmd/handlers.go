@@ -18,7 +18,7 @@ type application struct {
 	gitlabToken *string
 }
 
-func (a *application) DisplayIndex() http.Handler {
+func (a *application) handlerDisplayIndex() http.Handler {
 
 	// Declare templated files
 	templateFiles := []string{
@@ -38,7 +38,7 @@ func (a *application) DisplayIndex() http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-func (a *application) DisplayValues() http.Handler {
+func (a *application) handlerDisplayValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
@@ -103,7 +103,7 @@ func (a *application) handlerModifyValues() http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-func (a *application) ApplyValues() http.Handler {
+func (a *application) handlerApplyValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
