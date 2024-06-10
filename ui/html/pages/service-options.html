@@ -1,14 +1,14 @@
 {{ define "basic" }}
 <div id="basic-options">
-    <form class="col" hx-post="/edit" hx-trigger="change delay:100ms" hx-swap="none">
+    <form class="col" hx-post="/edit/basic" hx-trigger="change delay:100ms" hx-swap="none">
       <div class="form-group mb-2 col-8">
         <fieldset>
         <legend class="fw-semibold"> Basic options: </legend> 
           <div class="ms-2">
           <label class="mb-1" for="repository">Repository</label>
-          <input type="text" name="repository" id="repository" class="form-control input-sm">
+          <input type="text" name="repository" id="repository" class="form-control input-sm" value="{{ .Image.Repository }}">
           <label class="mb-1" for="tag">Tag</label>
-          <input type="text" name="tag" id="tag" class="form-control input-sm">
+          <input type="text" name="tag" id="tag" class="form-control input-sm" value="{{ .Image.Tag }}">
           <label for="replicas">Replicas</label>
           <input type="range" name="replicas" id="replicas-count" list="replica-number" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
         <output name="replicas-output" for="replicas-number">0</output><br>
@@ -24,7 +24,7 @@
 
 {{ define "resources" }}
 <div id="resources-option">
-  <form class="col" hx-post="/edit" hx-trigger="change delay:100ms" hx-swap="none">
+  <form class="col" hx-post="/edit/resources" hx-trigger="change delay:100ms" hx-swap="none">
       <div class="form-group mb-2 col-8">
         <fieldset>
         <legend> Requests: </legend> 
@@ -39,7 +39,7 @@
         <legend> Limits: </legend> 
           <div class="ms-2 mb-2">
           <label for="cpu-limits">CPU</label>
-          <input type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="100m">
+          <input type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="{{ .Resources.Limits.CPU }}">
           <label for="memory-limits">Memory</label>
           <input type="text" name="memory-limits" id="memory-limits" class="form-control input-sm">
           </div>

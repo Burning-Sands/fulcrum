@@ -55,14 +55,17 @@ func (a *application) handlerDisplayOptions() http.Handler {
 
 		pathValue := r.PathValue("option")
 		tmpl := template.Must(template.ParseFiles("ui/html/pages/service-options.html"))
-		tmpl.ExecuteTemplate(w, pathValue, nil)
+		err := tmpl.ExecuteTemplate(w, pathValue, *a.values)
+		if err != nil {
+			a.clientError(w, http.StatusBadRequest)
+		}
 		a.logger.Info("Display options")
 
 	}
 	return http.HandlerFunc(fn)
 }
 
-func (a *application) ModifyValues() http.Handler {
+func (a *application) handlerModifyValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
@@ -79,14 +82,19 @@ func (a *application) ModifyValues() http.Handler {
 			a.clientError(w, http.StatusBadRequest)
 			return
 		}
-
-		*repository = r.PostForm.Get("repository")
-		*tag = r.PostForm.Get("tag")
-		*replicas, _ = strconv.Atoi(r.PostForm.Get("replicas"))
-		limits.CPU = r.PostForm.Get("cpu-limits")
-		limits.Memory = r.PostForm.Get("memory-limits")
-		requests.CPU = r.PostForm.Get("cpu-requests")
-		requests.Memory = r.PostForm.Get("memory-requests")
+		pathValue := r.PathValue("option")
+		if pathValue == "basic" {
+			*repository = r.PostForm.Get("repository")
+			*tag = r.PostForm.Get("tag")
+			*replicas, _ = strconv.Atoi(r.PostForm.Get("replicas"))
+		} else if pathValue == "resources" {
+			limits.CPU = r.PostForm.Get("cpu-limits")
+			limits.Memory = r.PostForm.Get("memory-limits")
+			requests.CPU = r.PostForm.Get("cpu-requests")
+			requests.Memory = r.PostForm.Get("memory-requests")
+		} else {
+			a.clientError(w, http.StatusBadRequest)
+		}
 		// *hpa = r.PostForm.Get("hpa-enabled")
 
 		a.logger.Info("Modify values")
