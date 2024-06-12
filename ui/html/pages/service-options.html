@@ -11,8 +11,11 @@
           <input type="text" name="tag" id="tag" class="form-control input-sm" value="{{ .Image.Tag }}">
           <label for="replicas">Replicas</label>
           <input type="range" name="replicas" id="replicas-count" list="replica-number" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
-        <output name="replicas-output" for="replicas-number">0</output><br>
-          </div>
+          <output name="replicas-output" for="replicas-number">0</output><br>
+          <label class="mb-1" for="port-number">Port</label>
+          <input type="text" name="port-number" id="port-number" class="form-control input-sm" value="{{ .Ports.ContainerPort }}">
+          <div id="portHelp" class="form-text">Port for your service</div>
+        </div>
         </fieldset>
       </div>
       <button type="submit" class="mt-2 mb-4 btn btn-outline-dark">
@@ -46,5 +49,28 @@
         </fieldset>
       </div>
   </form>
+</div>
+{{ end }}
+
+{{ define "affinity" }}
+<div id="affinity-option">
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="Affinity" id="spotAffinity" checked>
+    <label class="form-check-label" for="spotAffinity">
+      Place pods on spot nodes
+    </label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="Affinity" id="regularAffinity">
+    <label class="form-check-label" for="regularAffinity">
+      Place pods on regular nodes
+    </label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="Affinity" id="spotAffinity" checked>
+    <label class="form-check-label" for="spotAffinity">
+      Place pods on spot and regular nodes
+    </label>
+  </div>
 </div>
 {{ end }}

@@ -1,22 +1,25 @@
-replicaCount: 2
+replicaCount: 3
 image:
   repository: nginx
-  tag: "1.10"
+  tag: test
 env: []
 envFrom: []
 resources:
   limits:
-    cpu: "100"
-    memory: 200Mi
+    cpu: ""
+    memory: ""
   requests:
-    cpu: 100m
-    memory: awdawd
+    cpu: ""
+    memory: ""
 affinity:
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms: []
 tolerations: []
-ports: []
+ports:
+  name: ""
+  containerPort: 0
+  protocol: ""
 service:
   ports: []
 metrics:

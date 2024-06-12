@@ -3,6 +3,13 @@
 <div id="display-values" class="col" hx-get="/display-values" hx-swap="display-values" hx-trigger="valuesChanged from:body">
   <h1 class="mb-4">Service declaration</h1>
   <pre class="prism-code language-yml"><code>---
+# Chart.yaml
+name: csgo-editor
+appVersion: 0.1.0
+dependencies:
+  uhc: 0.30.1
+---
+# values.yaml
 uhc:
   replicaCount: {{ .ReplicaCount }} 
   image: 
@@ -15,6 +22,10 @@ uhc:
     limits:
       cpu: {{ .Resources.Limits.CPU }}
       memory: {{ .Resources.Limits.Memory }}
+  ports:
+    - name: http
+      containerPort: {{ .Ports.ContainerPort }}
+      protocol: tcp
 </code></pre>
 </div>
 {{ end }}

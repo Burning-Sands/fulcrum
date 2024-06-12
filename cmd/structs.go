@@ -39,8 +39,12 @@ type Values struct {
 		} `yaml:"nodeAffinity"`
 	} `yaml:"affinity"`
 	Tolerations []interface{} `yaml:"tolerations"`
-	Ports       []interface{} `yaml:"ports"`
-	Service     struct {
+	Ports       struct {
+		Name          string `yaml:"name"`
+		ContainerPort int    `yaml:"containerPort"`
+		Protocol      string `yaml:"protocol"`
+	} `yaml:"ports"`
+	Service struct {
 		Ports []struct {
 			Name       string `yaml:"name"`
 			TargetPort string `yaml:"targetPort"`

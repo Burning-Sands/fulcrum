@@ -75,6 +75,7 @@ func (a *application) handlerModifyValues() http.Handler {
 			replicas   = &a.values.ReplicaCount
 			limits     = &a.values.Resources.Limits
 			requests   = &a.values.Resources.Requests
+			ports      = &a.values.Ports
 			// hpa        = &a.values.Hpa.Enabled
 		)
 		err := r.ParseForm()
@@ -82,8 +83,11 @@ func (a *application) handlerModifyValues() http.Handler {
 			a.clientError(w, http.StatusBadRequest)
 			return
 		}
+
 		pathValue := r.PathValue("option")
+
 		if pathValue == "basic" {
+			ports.ContainerPort, _ = strconv.Atoi(r.PostForm.Get("port-number"))
 			*repository = r.PostForm.Get("repository")
 			*tag = r.PostForm.Get("tag")
 			*replicas, _ = strconv.Atoi(r.PostForm.Get("replicas"))
