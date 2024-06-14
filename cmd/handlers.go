@@ -76,8 +76,21 @@ func (a *application) handlerModifyValues() http.Handler {
 			limits     = &a.values.Resources.Limits
 			requests   = &a.values.Resources.Requests
 			ports      = &a.values.Ports
-			// hpa        = &a.values.Hpa.Enabled
+			affinity   = &a.values.Affinity
 		)
+
+		regularAffinity := RequiredDuringSchedulingIgnoredDuringExecution{
+			NodeSelectorTerms: struct{
+        { 
+          MatchExpressions: struct{
+            {
+              Key
+            },
+          },
+        },
+      },
+		}
+
 		err := r.ParseForm()
 		if err != nil {
 			a.clientError(w, http.StatusBadRequest)
@@ -86,20 +99,22 @@ func (a *application) handlerModifyValues() http.Handler {
 
 		pathValue := r.PathValue("option")
 
-		if pathValue == "basic" {
+		switch pathValue {
+		case "basic":
 			ports.ContainerPort, _ = strconv.Atoi(r.PostForm.Get("port-number"))
 			*repository = r.PostForm.Get("repository")
 			*tag = r.PostForm.Get("tag")
 			*replicas, _ = strconv.Atoi(r.PostForm.Get("replicas"))
-		} else if pathValue == "resources" {
+		case "resources":
 			limits.CPU = r.PostForm.Get("cpu-limits")
 			limits.Memory = r.PostForm.Get("memory-limits")
 			requests.CPU = r.PostForm.Get("cpu-requests")
 			requests.Memory = r.PostForm.Get("memory-requests")
-		} else {
+		case "affinity":
+
+		default:
 			a.clientError(w, http.StatusBadRequest)
 		}
-		// *hpa = r.PostForm.Get("hpa-enabled")
 
 		a.logger.Info("Modify values")
 		w.Header().Add("HX-Trigger", "valuesChanged")

@@ -54,23 +54,25 @@
 
 {{ define "affinity" }}
 <div id="affinity-option">
-  <div class="form-check">
-    <input class="form-check-input" type="radio" name="Affinity" id="spotAffinity" checked>
-    <label class="form-check-label" for="spotAffinity">
-      Place pods on spot nodes
-    </label>
-  </div>
-  <div class="form-check">
-    <input class="form-check-input" type="radio" name="Affinity" id="regularAffinity">
-    <label class="form-check-label" for="regularAffinity">
-      Place pods on regular nodes
-    </label>
-  </div>
-  <div class="form-check">
-    <input class="form-check-input" type="radio" name="Affinity" id="spotAffinity" checked>
-    <label class="form-check-label" for="spotAffinity">
-      Place pods on spot and regular nodes
-    </label>
-  </div>
+  <form class="col" hx-post="/edit/affinity" hx-trigger="change delay:100ms" hx-swap="none">
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="Affinity" id="spotAffinity" checked>
+      <label class="form-check-label" for="spotAffinity">
+        Place pods on spot nodes
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="Affinity" id="regularAffinity">
+      <label class="form-check-label" for="regularAffinity">
+        Place pods on regular nodes
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="Affinity" id="spotAffinity" checked>
+      <label class="form-check-label" for="spotAffinity">
+        Place pods on spot and regular nodes
+      </label>
+    </div>
+  </form>
 </div>
 {{ end }}
