@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log/slog"
 	"net/http"
@@ -79,19 +80,23 @@ func (a *application) handlerModifyValues() http.Handler {
 			affinity   = &a.values.Affinity
 		)
 
-		regularAffinity := RequiredDuringSchedulingIgnoredDuringExecution{
-			NodeSelectorTerms: struct{
-        { 
-          MatchExpressions: struct{
-            {
-              Key
-            },
-          },
-        },
-      },
+		regularAffinityFile, err := os.ReadFile("nodeAffinityRegular.yaml")
+
+		if err != nil {
+			a.serverError(w, r, err)
+			os.Exit(1)
 		}
 
-		err := r.ParseForm()
+		err = yaml.Unmarshal(regularAffinityFile, &affinity)
+
+		if err != nil {
+			a.serverError(w, r, err)
+			os.Exit(1)
+		}
+
+		fmt.Println(a.values.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms)
+
+		err = r.ParseForm()
 		if err != nil {
 			a.clientError(w, http.StatusBadRequest)
 			return
@@ -110,8 +115,6 @@ func (a *application) handlerModifyValues() http.Handler {
 			limits.Memory = r.PostForm.Get("memory-limits")
 			requests.CPU = r.PostForm.Get("cpu-requests")
 			requests.Memory = r.PostForm.Get("memory-requests")
-		case "affinity":
-
 		default:
 			a.clientError(w, http.StatusBadRequest)
 		}

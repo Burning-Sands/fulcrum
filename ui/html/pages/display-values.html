@@ -26,6 +26,8 @@ uhc:
     - name: http
       containerPort: {{ .Ports.ContainerPort }}
       protocol: tcp
+  affinity:
+    {{ .Affinity }}
 </code></pre>
 </div>
 {{ end }}

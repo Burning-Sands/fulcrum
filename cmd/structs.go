@@ -37,7 +37,15 @@ type Values struct {
 	} `yaml:"resources"`
 	Affinity struct {
 		NodeAffinity struct {
-			Required RequiredDuringSchedulingIgnoredDuringExecution `yaml:"requiredDuringSchedulingIgnoredDuringExecution,omitempty"`
+			RequiredDuringSchedulingIgnoredDuringExecution struct {
+				NodeSelectorTerms []struct {
+					MatchExpressions []struct {
+						Key      string   `yaml:"key"`
+						Operator string   `yaml:"operator"`
+						Values   []string `yaml:"values"`
+					} `yaml:"matchExpressions"`
+				} `yaml:"nodeSelectorTerms"`
+			} `yaml:"requiredDuringSchedulingIgnoredDuringExecution,omitempty"`
 		} `yaml:"nodeAffinity"`
 	} `yaml:"affinity"`
 	Tolerations []interface{} `yaml:"tolerations"`
