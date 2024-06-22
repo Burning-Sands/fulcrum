@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"log/slog"
 	"net/http"
@@ -80,31 +79,17 @@ func (a *application) handlerModifyValues() http.Handler {
 			affinity   = &a.values.Affinity
 		)
 
-		regularAffinityFile, err := os.ReadFile("nodeAffinityRegular.yaml")
-
-		if err != nil {
-			a.serverError(w, r, err)
-			os.Exit(1)
-		}
-
-		err = yaml.Unmarshal(regularAffinityFile, &affinity)
-
-		if err != nil {
-			a.serverError(w, r, err)
-			os.Exit(1)
-		}
-
-		fmt.Println(a.values.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms)
-
-		err = r.ParseForm()
+		err := r.ParseForm()
 		if err != nil {
 			a.clientError(w, http.StatusBadRequest)
 			return
 		}
 
 		pathValue := r.PathValue("option")
+		fg := r.PostForm.Get
 
 		switch pathValue {
+
 		case "basic":
 			ports.ContainerPort, _ = strconv.Atoi(r.PostForm.Get("port-number"))
 			*repository = r.PostForm.Get("repository")
@@ -115,6 +100,45 @@ func (a *application) handlerModifyValues() http.Handler {
 			limits.Memory = r.PostForm.Get("memory-limits")
 			requests.CPU = r.PostForm.Get("cpu-requests")
 			requests.Memory = r.PostForm.Get("memory-requests")
+		case "affinity":
+
+			aff := fg("affinity")
+
+			if aff == "spot" {
+				f, err := os.ReadFile("nodeAffinitySpot.yaml")
+				if err != nil {
+					a.serverError(w, r, err)
+					os.Exit(1)
+				}
+				err = yaml.Unmarshal(f, &affinity)
+				if err != nil {
+					a.serverError(w, r, err)
+					os.Exit(1)
+				}
+			} else if aff == "regular" {
+				f, err := os.ReadFile("nodeAffinityRegular.yaml")
+				if err != nil {
+					a.serverError(w, r, err)
+					os.Exit(1)
+				}
+				err = yaml.Unmarshal(f, &affinity)
+				if err != nil {
+					a.serverError(w, r, err)
+					os.Exit(1)
+				}
+			} else {
+				f, err := os.ReadFile("nodeAffinitySpot.yaml")
+				if err != nil {
+					a.serverError(w, r, err)
+					os.Exit(1)
+				}
+				err = yaml.Unmarshal(f, &affinity)
+				if err != nil {
+					a.serverError(w, r, err)
+					os.Exit(1)
+				}
+			}
+
 		default:
 			a.clientError(w, http.StatusBadRequest)
 		}

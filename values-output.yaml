@@ -1,7 +1,4 @@
-replicaCount: 2
-image:
-  repository: nginx
-  tag: "1.16"
+image: {}
 env: []
 envFrom: []
 resources:
@@ -12,14 +9,7 @@ resources:
     cpu: ""
     memory: ""
 affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: node-type
-              operator: In
-              values:
-                - regular
+  nodeAffinity: {}
 tolerations: []
 ports:
   name: ""
