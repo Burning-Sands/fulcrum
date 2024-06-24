@@ -1,15 +1,5 @@
 package main
 
-type RequiredDuringSchedulingIgnoredDuringExecution struct {
-	NodeSelectorTerms []struct {
-		MatchExpressions []struct {
-			Key      string   `yaml:"key"`
-			Operator string   `yaml:"operator"`
-			Values   []string `yaml:"values"`
-		} `yaml:"matchExpressions"`
-	} `yaml:"nodeSelectorTerms"`
-}
-
 type Values struct {
 	NameOverride     string `yaml:"nameOverride,omitempty"`
 	FullnameOverride string `yaml:"fullnameOverride,omitempty"`

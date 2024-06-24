@@ -6,4 +6,3 @@ nodeAffinity:
           operator: "In"
           values:
             - "regular"
-

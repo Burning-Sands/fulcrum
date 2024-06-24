@@ -52,9 +52,11 @@
 </div>
 {{ end }}
 
-{{ define "affinity" }}
+{{ define "affinity-hpa" }}
 <div id="affinity-option">
-  <form class="col" hx-post="/edit/affinity" hx-trigger="change delay:100ms" hx-swap="none" id="affinityForm">
+  <form class="col" hx-post="/edit/affinity-hpa" hx-trigger="change delay:100ms" hx-swap="none" id="affinityForm">
+    <fieldset>
+    <legend> Specify pods node placement </legend>
     <div class="form-check">
       <input class="form-check-input" type="radio" name="affinity" id="spotAffinity" value="spot" checked>
       <label class="form-check-label" for="spotAffinity">
@@ -67,6 +69,16 @@
         Place pods on regular nodes
       </label>
     </div>
+    </fieldset>
+    <fieldset>
+    <legend> Define Horizontal Pod Autoscaling </legend>
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" role="switch" name="hpaEnabled" id="hpa" value="enabled">
+      <label class="form-check-label" for="hpa">
+        Enable HPA
+      </label>
+    </div>
+    </fieldset>
   </form>
 </div>
 {{ end }}

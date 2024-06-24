@@ -27,7 +27,18 @@ uhc:
       containerPort: {{ .Ports.ContainerPort }}
       protocol: tcp
   affinity:
-    {{ .Affinity }}
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: "node-type"
+              operator: "In"
+              values:
+                - {{ range .Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms}}{{range .MatchExpressions }}{{ range .Values }}{{ . }}{{end}}{{end}}{{end}}    
+  hpa:
+    enabled: {{ .Hpa.Enabled }} 
+    minReplicas: {{ .Hpa.MinReplicas }} 
+    maxReplicas: {{ .Hpa.MaxReplicas }} 
 </code></pre>
 </div>
 {{ end }}

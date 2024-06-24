@@ -77,6 +77,7 @@ func (a *application) handlerModifyValues() http.Handler {
 			requests   = &a.values.Resources.Requests
 			ports      = &a.values.Ports
 			affinity   = &a.values.Affinity
+			hpa        = &a.values.Hpa
 		)
 
 		err := r.ParseForm()
@@ -100,7 +101,7 @@ func (a *application) handlerModifyValues() http.Handler {
 			limits.Memory = r.PostForm.Get("memory-limits")
 			requests.CPU = r.PostForm.Get("cpu-requests")
 			requests.Memory = r.PostForm.Get("memory-requests")
-		case "affinity":
+		case "affinity-hpa":
 
 			aff := fg("affinity")
 
@@ -127,23 +128,21 @@ func (a *application) handlerModifyValues() http.Handler {
 					os.Exit(1)
 				}
 			} else {
-				f, err := os.ReadFile("nodeAffinitySpot.yaml")
-				if err != nil {
-					a.serverError(w, r, err)
-					os.Exit(1)
-				}
-				err = yaml.Unmarshal(f, &affinity)
-				if err != nil {
-					a.serverError(w, r, err)
-					os.Exit(1)
-				}
+				a.serverError(w, r, err)
+				os.Exit(1)
+			}
+
+			if fg("hpaEnabled") == "enabled" {
+				hpa.Enabled = true
+			} else {
+				hpa.Enabled = false
 			}
 
 		default:
 			a.clientError(w, http.StatusBadRequest)
 		}
 
-		a.logger.Info("Modify values")
+		a.logger.Info("Modify values", "path", pathValue)
 		w.Header().Add("HX-Trigger", "valuesChanged")
 	}
 	return http.HandlerFunc(fn)
