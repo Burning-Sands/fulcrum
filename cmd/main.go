@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-
 	values := newValues()
 	// logger
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
