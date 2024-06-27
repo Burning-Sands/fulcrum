@@ -59,7 +59,7 @@
 <div id="affinity-option">
   <form class="col" hx-post="/edit/affinity-hpa" hx-trigger="change delay:100ms" hx-swap="none" id="affinityForm">
     <fieldset>
-    <legend> Specify pods node placement </legend>
+    <legend> Pods node placement </legend>
     <div class="form-check">
       <input class="form-check-input" type="radio" name="affinity" id="spotAffinity" value="spot" checked>
       <label class="form-check-label" for="spotAffinity">
@@ -74,14 +74,32 @@
     </div>
     </fieldset>
     <fieldset>
-    <legend> Define Horizontal Pod Autoscaling </legend>
+    <legend> Horizontal Pod Autoscaling </legend>
     <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" role="switch" name="hpaEnabled" id="hpa" value="enabled">
-      <label class="form-check-label" for="hpa">
-        Enable HPA
-      </label>
+      <!-- <label class="form-label" for="hpa"> -->
+      <!--   Enable HPA -->
+      <!-- </label> -->
+      <input class="form-check-input" type="checkbox" role="switch" name="hpaEnabled" id="hpa" value="enabled" aria-describedby="hpaDescription"> 
+        <div id="hpaDescription" class="form-text">
+            Enable HPA
+        </div>
+    </div>
+    <div>
+      <label for="hpaMinReplicas"> Min Replicas</label>
+      <input type="range" name="hpaMinReplicas" id="hpaMinReplicas" list="hpaReplicaNumber" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
+      <output name="hpaMinReplicasOutput" for="hpaMinReplicas">0</output><br>
+    </div>
+    <div>
+      <label for="hpaMaxReplicas"> Max Replicas</label>
+      <input type="range" name="hpaMaxReplicas" id="hpaMaxReplicas" list="hpaReplicaNumber" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
+      <output name="hpaMaxReplicasOutput" for="hpaMaxReplicas">0</output><br>
     </div>
     </fieldset>
   </form>
 </div>
+{{ end }}
+
+{{ define "env" }}
+<div id="env-option">
+  <form class="col" hx-post="/edit/env" hx-swap="none" id="envForm">
 {{ end }}

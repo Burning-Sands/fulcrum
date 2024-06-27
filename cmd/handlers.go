@@ -71,6 +71,7 @@ func (a *application) handlerModifyValues() http.Handler {
 			ports      = &a.values.Ports
 			affinity   = &a.values.Affinity
 			hpa        = &a.values.Hpa
+			env        = &a.values.Env
 		)
 
 		err := r.ParseForm()
@@ -79,8 +80,8 @@ func (a *application) handlerModifyValues() http.Handler {
 			return
 		}
 
-		pathValue := r.PathValue("option")
 		formGet := r.PostForm.Get
+		pathValue := r.PathValue("option")
 
 		switch pathValue {
 
@@ -131,6 +132,16 @@ func (a *application) handlerModifyValues() http.Handler {
 			} else {
 				hpa.Enabled = false
 			}
+
+			hpa.MinReplicas, _ = strconv.Atoi(formGet("hpaMinReplicas"))
+			hpa.MaxReplicas, _ = strconv.Atoi(formGet("hpaMaxReplicas"))
+
+		case "env":
+			e := EnvVariable{
+				Name:  formGet("envName"),
+				Value: formGet("envValue"),
+			}
+			a.values.Env = append(a.values.Env, e)
 
 		default:
 			a.clientError(w, http.StatusBadRequest)

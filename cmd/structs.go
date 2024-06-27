@@ -8,6 +8,11 @@ type application struct {
 	gitlabToken *string
 }
 
+type EnvVariable struct {
+	Name  string `yaml:"name"`
+	Value string `yaml:"value,omitempty"`
+}
+
 type Values struct {
 	NameOverride     string `yaml:"nameOverride,omitempty"`
 	FullnameOverride string `yaml:"fullnameOverride,omitempty"`
@@ -21,7 +26,7 @@ type Values struct {
 		Tag        string `yaml:"tag,omitempty"`
 		PullPolicy string `yaml:"pullPolicy,omitempty"`
 	} `yaml:"image"`
-	Env       []interface{} `yaml:"env"`
+	Env       []EnvVariable `yaml:"env"`
 	EnvFrom   []interface{} `yaml:"envFrom"`
 	Resources struct {
 		Limits struct {
