@@ -1,5 +1,13 @@
 package main
 
+import "log/slog"
+
+type application struct {
+	logger      *slog.Logger
+	values      *Values
+	gitlabToken *string
+}
+
 type Values struct {
 	NameOverride     string `yaml:"nameOverride,omitempty"`
 	FullnameOverride string `yaml:"fullnameOverride,omitempty"`

@@ -28,6 +28,8 @@
 {{ define "resources" }}
 <div id="resources-option">
   <form class="col" hx-post="/edit/resources" hx-trigger="change delay:100ms" hx-swap="none">
+    <fieldset>
+      <legend class="fw-semibold"> Resources: </legend> 
       <div class="form-group mb-2 col-8">
         <fieldset>
         <legend> Requests: </legend> 
@@ -48,6 +50,7 @@
           </div>
         </fieldset>
       </div>
+    </fieldset>
   </form>
 </div>
 {{ end }}

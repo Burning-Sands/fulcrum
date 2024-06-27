@@ -2,7 +2,6 @@ package main
 
 import (
 	"html/template"
-	"log/slog"
 	"net/http"
 	"os"
 	"strconv"
@@ -11,12 +10,6 @@ import (
 	gitlab "github.com/xanzy/go-gitlab"
 	"gopkg.in/yaml.v3"
 )
-
-type application struct {
-	logger      *slog.Logger
-	values      *Values
-	gitlabToken *string
-}
 
 func (a *application) handlerDisplayIndex() http.Handler {
 
@@ -87,23 +80,23 @@ func (a *application) handlerModifyValues() http.Handler {
 		}
 
 		pathValue := r.PathValue("option")
-		fg := r.PostForm.Get
+		formGet := r.PostForm.Get
 
 		switch pathValue {
 
 		case "basic":
-			ports.ContainerPort, _ = strconv.Atoi(r.PostForm.Get("port-number"))
+			ports.ContainerPort, _ = strconv.Atoi(formGet("port-number"))
 			*repository = r.PostForm.Get("repository")
 			*tag = r.PostForm.Get("tag")
-			*replicas, _ = strconv.Atoi(r.PostForm.Get("replicas"))
+			*replicas, _ = strconv.Atoi(formGet("replicas"))
 		case "resources":
-			limits.CPU = r.PostForm.Get("cpu-limits")
-			limits.Memory = r.PostForm.Get("memory-limits")
-			requests.CPU = r.PostForm.Get("cpu-requests")
-			requests.Memory = r.PostForm.Get("memory-requests")
+			limits.CPU = formGet("cpu-limits")
+			limits.Memory = formGet("memory-limits")
+			requests.CPU = formGet("cpu-requests")
+			requests.Memory = formGet("memory-requests")
 		case "affinity-hpa":
 
-			aff := fg("affinity")
+			aff := formGet("affinity")
 
 			if aff == "spot" {
 				f, err := os.ReadFile("nodeAffinitySpot.yaml")
@@ -132,8 +125,9 @@ func (a *application) handlerModifyValues() http.Handler {
 				os.Exit(1)
 			}
 
-			if fg("hpaEnabled") == "enabled" {
+			if formGet("hpaEnabled") == "enabled" {
 				hpa.Enabled = true
+				a.values.ReplicaCount = 0
 			} else {
 				hpa.Enabled = false
 			}
