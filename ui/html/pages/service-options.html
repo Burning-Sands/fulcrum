@@ -101,17 +101,17 @@
 
 {{ define "env" }}
 <div id="env-option">
-  <form class="col" hx-post="/edit/env" hx-swap="none" id="envForm">
+  <form class="col" id="envForm" hx-post="/edit/env" hx-swap="none">
     <fieldset>
     <legend> Env variables </legend>
     <div class="input-group">
-      <input class="form-control" type="text" id="envValue" value="New value">
-      <input class="form-control" type="text" id="envValue" value="New value">
+      <input class="form-control" type="text" name="envName" id="envName" value="Env name">
+      <input class="form-control" type="text" name="envValue" id="envValue" value="Env value">
     </div>
+        <button type="submit" class="mt-2 mb-4 btn btn-outline-dark">
+            Submit
+        </button>
     </fieldset>
-  <button type="submit" class="mt-2 mb-4 btn btn-outline-dark">
-    Submit
-  </button>
   </form>
 </div>
 {{ end }}
