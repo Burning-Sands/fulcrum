@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	values := newValues()
+	values := NewValues()
 	// logger
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
@@ -20,11 +20,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	app := application{
-		logger:      logger,
-		values:      values,
-		gitlabToken: gitlabToken,
-	}
+	app := NewApplication(
+		logger,
+		values,
+		gitlabToken)
 
 	// Start main handler (server)
 	logger.Info("Starting server")

@@ -8,6 +8,14 @@ type application struct {
 	gitlabToken *string
 }
 
+func NewApplication(l *slog.Logger, v *Values, gt *string) *application {
+	return &application{
+		logger:      l,
+		values:      v,
+		gitlabToken: gt,
+	}
+}
+
 type EnvVariable struct {
 	Name  string `yaml:"name"`
 	Value string `yaml:"value,omitempty"`
@@ -81,6 +89,6 @@ type Values struct {
 	} `yaml:"hpa"`
 }
 
-func newValues() *Values {
+func NewValues() *Values {
 	return &Values{}
 }

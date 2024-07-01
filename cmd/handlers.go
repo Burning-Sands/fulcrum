@@ -138,10 +138,10 @@ func (a *application) handlerModifyValues() http.Handler {
 
 		case "env":
 			e := EnvVariable{
-				Name:  formGet("envName"),
+				Name:  formGet("envKey"),
 				Value: formGet("envValue"),
 			}
-			a.values.Env = append(a.values.Env, e)
+			*env = append(*env, e)
 
 		default:
 			a.clientError(w, http.StatusBadRequest)
