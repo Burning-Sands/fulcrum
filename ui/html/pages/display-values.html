@@ -39,9 +39,11 @@ uhc:
     enabled: {{ .Hpa.Enabled }} 
     minReplicas: {{ .Hpa.MinReplicas }} 
     maxReplicas: {{ .Hpa.MaxReplicas }} 
+{{with .Env}}
   env:
-{{range .Env}}  - name: {{.Name}}
+{{range .}}  - name: {{.Name}}
     value: {{.Value}}
+{{end}}
 {{end}}
 </code></pre>
 </div>
