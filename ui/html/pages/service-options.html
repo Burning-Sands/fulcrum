@@ -6,14 +6,14 @@
         <legend class="fw-semibold"> Basic options: </legend> 
           <div class="ms-2">
           <label class="mb-1" for="repository">Repository</label>
-          <input type="text" name="repository" id="repository" class="form-control input-sm" value="{{ .Image.Repository }}">
+          <input type="text" name="repository" id="repository" class="form-control input-sm" value="{{ .Values.Uhc.Image.Repository }}">
           <label class="mb-1" for="tag">Tag</label>
-          <input type="text" name="tag" id="tag" class="form-control input-sm" value="{{ .Image.Tag }}">
+          <input type="text" name="tag" id="tag" class="form-control input-sm" value="{{ .Values.Uhc.Image.Tag }}">
           <label for="replicas">Replicas</label>
           <input type="range" name="replicas" id="replicas-count" list="replica-number" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
           <output name="replicas-output" for="replicas-number">0</output><br>
           <label class="mb-1" for="port-number">Port</label>
-          <input type="text" name="port-number" id="port-number" class="form-control input-sm" value="{{ .Ports.ContainerPort }}">
+          <input type="text" name="port-number" id="port-number" class="form-control input-sm" value="{{ .Values.Uhc.Ports.ContainerPort }}">
           <div id="portHelp" class="form-text">Port for your service</div>
         </div>
         </fieldset>
@@ -44,7 +44,7 @@
         <legend> Limits: </legend> 
           <div class="ms-2 mb-2">
           <label for="cpu-limits">CPU</label>
-          <input type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="{{ .Resources.Limits.CPU }}">
+          <input type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Limits.CPU }}">
           <label for="memory-limits">Memory</label>
           <input type="text" name="memory-limits" id="memory-limits" class="form-control input-sm">
           </div>

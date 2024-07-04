@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"html/template"
 	"net/http"
 	"os"
@@ -25,7 +26,7 @@ func (a *application) handlerDisplayIndex() http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		tmpl := template.Must(template.ParseFiles(templateFiles...))
-		tmpl.ExecuteTemplate(w, "base", *a.values)
+		tmpl.ExecuteTemplate(w, "base", a.templateData)
 	}
 
 	return http.HandlerFunc(fn)
@@ -36,7 +37,7 @@ func (a *application) handlerDisplayValues() http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		tmpl := template.Must(template.ParseFiles("ui/html/pages/display-values.html"))
-		tmpl.ExecuteTemplate(w, "display-values", *a.values)
+		tmpl.ExecuteTemplate(w, "display-values", a.templateData)
 		a.logger.Info("Display values")
 	}
 	return http.HandlerFunc(fn)
@@ -48,7 +49,7 @@ func (a *application) handlerDisplayOptions() http.Handler {
 
 		pathValue := r.PathValue("option")
 		tmpl := template.Must(template.ParseFiles("ui/html/pages/service-options.html"))
-		err := tmpl.ExecuteTemplate(w, pathValue, *a.values)
+		err := tmpl.ExecuteTemplate(w, pathValue, a.templateData)
 		if err != nil {
 			a.clientError(w, http.StatusBadRequest)
 		}
@@ -63,15 +64,15 @@ func (a *application) handlerModifyValues() http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		var (
-			repository = &a.values.Image.Repository
-			tag        = &a.values.Image.Tag
-			replicas   = &a.values.ReplicaCount
-			limits     = &a.values.Resources.Limits
-			requests   = &a.values.Resources.Requests
-			ports      = &a.values.Ports
-			affinity   = &a.values.Affinity
-			hpa        = &a.values.Hpa
-			env        = &a.values.Env
+			repository = &a.templateData.Values.Uhc.Image.Repository
+			tag        = &a.templateData.Values.Uhc.Image.Tag
+			replicas   = &a.templateData.Values.Uhc.ReplicaCount
+			limits     = &a.templateData.Values.Uhc.Resources.Limits
+			requests   = &a.templateData.Values.Uhc.Resources.Requests
+			ports      = &a.templateData.Values.Uhc.Ports
+			affinity   = &a.templateData.Values.Uhc.Affinity
+			hpa        = &a.templateData.Values.Uhc.Hpa
+			env        = &a.templateData.Values.Uhc.Env
 		)
 
 		err := r.ParseForm()
@@ -128,7 +129,7 @@ func (a *application) handlerModifyValues() http.Handler {
 
 			if formGet("hpaEnabled") == "enabled" {
 				hpa.Enabled = true
-				a.values.ReplicaCount = 0
+				a.templateData.Values.Uhc.ReplicaCount = 0
 			} else {
 				hpa.Enabled = false
 			}
@@ -159,21 +160,28 @@ func (a *application) handlerApplyValues() http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		fileName := "values-output.yaml"
-
-		writer, err := os.Create(fileName)
-
-		if err != nil {
-			a.serverError(w, r, err)
-			os.Exit(1)
-		}
-
-		encoder := yaml.NewEncoder(writer)
+		//
+		// writer, err := os.Create(fileName)
+		//
+		// if err != nil {
+		// 	a.serverError(w, r, err)
+		// 	os.Exit(1)
+		// }
+		//
+		var writer bytes.Buffer
+		encoder := yaml.NewEncoder(&writer)
 		encoder.SetIndent(2)
-		encoder.Encode(*a.values)
+		encoder.Encode(*a.templateData)
 		encoder.Close()
+		//
+		// file, _ := os.ReadFile(fileName)
+		// fileAsString := string(file)
 
-		file, _ := os.ReadFile(fileName)
-		fileAsString := string(file)
+		// out, err := yaml.Marshal(a.values)
+		// if err != nil {
+		// 	a.serverError(w, r, err)
+		// }
+		v := writer.String()
 
 		git, err := gitlab.NewClient(*a.gitlabToken)
 		if err != nil {
@@ -182,7 +190,7 @@ func (a *application) handlerApplyValues() http.Handler {
 
 		cf := &gitlab.UpdateFileOptions{
 			Branch:        gitlab.Ptr("master"),
-			Content:       gitlab.Ptr(fileAsString),
+			Content:       gitlab.Ptr(v),
 			CommitMessage: gitlab.Ptr("Adding a test file"),
 		}
 

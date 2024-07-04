@@ -4,27 +4,29 @@
   <h1 class="mb-4">Service declaration</h1>
   <pre class="prism-code language-yml"><code>---
 # Chart.yaml
+{{ with .Chart }}
 name: csgo-editor
 appVersion: 0.1.0
 dependencies:
   uhc: 0.30.1
 ---
 # values.yaml
+{{ with .Values}}
 uhc:
-  replicaCount: {{ .ReplicaCount }} 
+  replicaCount: {{ .Uhc.ReplicaCount }} 
   image: 
-    repository: {{ .Image.Repository }} 
-    tag: {{ .Image.Tag }} 
+    repository: {{ .Uhc.Image.Repository }} 
+    tag: {{ .Uhc.Image.Tag }} 
   resources:
     requests:
-      cpu: {{ .Resources.Requests.CPU }}
-      memory: {{ .Resources.Requests.Memory }}
+      cpu: {{ .Uhc.Resources.Requests.CPU }}
+      memory: {{ .Uhc.Resources.Requests.Memory }}
     limits:
-      cpu: {{ .Resources.Limits.CPU }}
-      memory: {{ .Resources.Limits.Memory }}
+      cpu: {{ .Uhc.Resources.Limits.CPU }}
+      memory: {{ .Uhc.Resources.Limits.Memory }}
   ports:
     - name: http
-      containerPort: {{ .Ports.ContainerPort }}
+      containerPort: {{ .Uhc.Ports.ContainerPort }}
       protocol: tcp
   affinity:
     nodeAffinity:
@@ -34,15 +36,18 @@ uhc:
             - key: "node-type"
               operator: "In"
               values:
-                - {{ range .Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms}}{{range .MatchExpressions }}{{ range .Values }}{{ . }}{{end}}{{end}}{{end}}    
+                - {{ range .Uhc.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms}}{{range .MatchExpressions }}{{ range .Values }}{{ . }}{{end}}{{end}}{{end}}    
+{{ with .Uhc.Hpa}}
   hpa:
-    enabled: {{ .Hpa.Enabled }} 
-    minReplicas: {{ .Hpa.MinReplicas }} 
-    maxReplicas: {{ .Hpa.MaxReplicas }} 
-{{with .Env}}
+    enabled: {{ .Enabled }} 
+    minReplicas: {{ .MinReplicas }} 
+    maxReplicas: {{ .MaxReplicas }} 
+{{ end }}
+{{with .Uhc.Env}}
   env:
 {{range .}}  - name: {{.Name}}
     value: {{.Value}}
+{{end}}
 {{end}}
 {{end}}
 </code></pre>
