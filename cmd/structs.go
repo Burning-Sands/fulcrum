@@ -22,13 +22,13 @@ type EnvVariable struct {
 }
 
 type TemplateData struct {
-	Chart  Chart
-	Values Values
+	Chart  *Chart
+	Values *Values
 }
 
-func NewTemplateData() *TemplateData {
-	return &TemplateData{}
-}
+// func NewTemplateData() *TemplateData {
+// 	return &TemplateData{}
+// }
 
 type Chart struct {
 	Name         string            `yaml:"name"`
@@ -38,6 +38,7 @@ type Chart struct {
 
 func NewChart() *Chart {
 	return &Chart{
+		AppVersion: "0.1.0",
 		Dependencies: map[string]string{
 			"uhc": "0.30.1",
 		},

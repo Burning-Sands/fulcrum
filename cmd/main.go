@@ -8,7 +8,12 @@ import (
 )
 
 func main() {
-	templateData := NewTemplateData()
+	chart := NewChart()
+	values := NewValues()
+	templateData := &TemplateData{
+		Chart:  chart,
+		Values: values,
+	}
 	// logger
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
