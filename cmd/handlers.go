@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"html/template"
 	"net/http"
 	"os"
 	"strconv"
@@ -14,18 +13,10 @@ import (
 
 func (a *application) handlerDisplayIndex() http.Handler {
 
-	// Declare templated files
-	templateFiles := []string{
-		"ui/html/base.html",
-		"ui/html/pages/index.html",
-		"ui/html/pages/apply-values.html",
-		"ui/html/pages/service-options.html",
-		"ui/html/pages/display-values.html",
-	}
-
 	fn := func(w http.ResponseWriter, r *http.Request) {
+		a.logger.Info("Display index")
 
-		tmpl := template.Must(template.ParseFiles(templateFiles...))
+		tmpl := a.templateCache["index.html"]
 		tmpl.ExecuteTemplate(w, "base", a.templateData)
 	}
 
@@ -35,10 +26,10 @@ func (a *application) handlerDisplayIndex() http.Handler {
 func (a *application) handlerDisplayValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
-
-		tmpl := template.Must(template.ParseFiles("ui/html/pages/display-values.html"))
-		tmpl.ExecuteTemplate(w, "display-values", a.templateData)
 		a.logger.Info("Display values")
+
+		tmpl := a.templateCache["display-values.html"]
+		tmpl.ExecuteTemplate(w, "display-values", a.templateData)
 	}
 	return http.HandlerFunc(fn)
 }
@@ -46,14 +37,14 @@ func (a *application) handlerDisplayValues() http.Handler {
 func (a *application) handlerDisplayOptions() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
-
 		pathValue := r.PathValue("option")
-		tmpl := template.Must(template.ParseFiles("ui/html/pages/service-options.html"))
+		a.logger.Info("Display options", "option", pathValue)
+
+		tmpl := a.templateCache["service-options.html"]
 		err := tmpl.ExecuteTemplate(w, pathValue, a.templateData)
 		if err != nil {
 			a.clientError(w, http.StatusBadRequest)
 		}
-		a.logger.Info("Display options")
 
 	}
 	return http.HandlerFunc(fn)
@@ -160,27 +151,11 @@ func (a *application) handlerApplyValues() http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		fileName := "values-output.yaml"
-		//
-		// writer, err := os.Create(fileName)
-		//
-		// if err != nil {
-		// 	a.serverError(w, r, err)
-		// 	os.Exit(1)
-		// }
-		//
 		var writer bytes.Buffer
 		encoder := yaml.NewEncoder(&writer)
 		encoder.SetIndent(2)
 		encoder.Encode(*a.templateData)
 		encoder.Close()
-		//
-		// file, _ := os.ReadFile(fileName)
-		// fileAsString := string(file)
-
-		// out, err := yaml.Marshal(a.values)
-		// if err != nil {
-		// 	a.serverError(w, r, err)
-		// }
 		v := writer.String()
 
 		git, err := gitlab.NewClient(*a.gitlabToken)

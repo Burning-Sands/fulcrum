@@ -1,101 +1,101 @@
 {{ define "basic" }}
 <div id="basic-options">
     <form class="col" hx-post="/edit/basic" hx-trigger="change delay:100ms" hx-swap="none">
-      <div class="form-group mb-2 col-8">
-        <fieldset>
-        <legend class="fw-semibold"> Basic options: </legend> 
-          <div class="ms-2">
-          <label class="mb-1" for="repository">Repository</label>
-          <input type="text" name="repository" id="repository" class="form-control input-sm" value="{{ .Values.Uhc.Image.Repository }}">
-          <label class="mb-1" for="tag">Tag</label>
-          <input type="text" name="tag" id="tag" class="form-control input-sm" value="{{ .Values.Uhc.Image.Tag }}">
-          <label for="replicas">Replicas</label>
-          <input type="range" name="replicas" id="replicas-count" list="replica-number" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
-          <output name="replicas-output" for="replicas-number">0</output><br>
-          <label class="mb-1" for="port-number">Port</label>
-          <input type="text" name="port-number" id="port-number" class="form-control input-sm" value="{{ .Values.Uhc.Ports.ContainerPort }}">
-          <div id="portHelp" class="form-text">Port for your service</div>
+        <div class="form-group mb-2 col-8">
+            <fieldset>
+                <legend class="fw-semibold"> Basic options: </legend> 
+                <div class="ms-2">
+                    <label class="mb-1" for="repository">Repository</label>
+                    <input type="text" name="repository" id="repository" class="form-control input-sm" value="{{ .Values.Uhc.Image.Repository }}">
+                    <label class="mb-1" for="tag">Tag</label>
+                    <input type="text" name="tag" id="tag" class="form-control input-sm" value="{{ .Values.Uhc.Image.Tag }}">
+                    <label for="replicas">Replicas</label>
+                    <input type="range" name="replicas" id="replicas-count" list="replica-number" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="{{ .Values.Uhc.ReplicaCount }}">
+                    <output name="replicas-output" for="replicas-number">{{ .Values.Uhc.ReplicaCount }}</output><br>
+                    <label class="mb-1" for="port-number">Port</label>
+                    <input type="text" name="port-number" id="port-number" class="form-control input-sm" value="{{ .Values.Uhc.Ports.ContainerPort }}">
+                    <div id="portHelp" class="form-text">Port for your service</div>
+                </div>
+            </fieldset>
         </div>
-        </fieldset>
-      </div>
-      <button type="submit" class="mt-2 mb-4 btn btn-outline-dark">
-        Submit
-      </button>
+        <button type="submit" class="mt-2 mb-4 btn btn-outline-dark">
+            Submit
+        </button>
     </form>
 </div>
 {{ end }}
 
 {{ define "resources" }}
 <div id="resources-option">
-  <form class="col" hx-post="/edit/resources" hx-trigger="change delay:100ms" hx-swap="none">
-    <fieldset>
-      <legend class="fw-semibold"> Resources: </legend> 
-      <div class="form-group mb-2 col-8">
+    <form class="col" hx-post="/edit/resources" hx-trigger="change delay:100ms" hx-swap="none">
         <fieldset>
-        <legend> Requests: </legend> 
-          <div class="ms-2">
-          <label for="cpu-requests">CPU</label>
-          <input type="text" name="cpu-requests" id="cpu-requests" class="form-control input-sm">
-          <label for="memory-requests">Memory</label>
-          <input type="text" name="memory-requests" id="memory-requests" class="form-control input-sm">
-          </div>
+            <legend class="fw-semibold"> Resources: </legend> 
+            <div class="form-group mb-2 col-8">
+                <fieldset>
+                    <legend> Requests: </legend> 
+                    <div class="ms-2">
+                        <label for="cpu-requests">CPU</label>
+                        <input type="text" name="cpu-requests" id="cpu-requests" class="form-control input-sm">
+                        <label for="memory-requests">Memory</label>
+                        <input type="text" name="memory-requests" id="memory-requests" class="form-control input-sm">
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend> Limits: </legend> 
+                    <div class="ms-2 mb-2">
+                        <label for="cpu-limits">CPU</label>
+                        <input type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Limits.CPU }}">
+                        <label for="memory-limits">Memory</label>
+                        <input type="text" name="memory-limits" id="memory-limits" class="form-control input-sm">
+                    </div>
+                </fieldset>
+            </div>
         </fieldset>
-        <fieldset>
-        <legend> Limits: </legend> 
-          <div class="ms-2 mb-2">
-          <label for="cpu-limits">CPU</label>
-          <input type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Limits.CPU }}">
-          <label for="memory-limits">Memory</label>
-          <input type="text" name="memory-limits" id="memory-limits" class="form-control input-sm">
-          </div>
-        </fieldset>
-      </div>
-    </fieldset>
-  </form>
+    </form>
 </div>
 {{ end }}
 
 {{ define "affinity-hpa" }}
 <div id="affinity-option">
-  <form class="col" hx-post="/edit/affinity-hpa" hx-trigger="change delay:100ms" hx-swap="none" id="affinityForm">
-    <fieldset>
-    <legend> Pods node placement </legend>
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name="affinity" id="spotAffinity" value="spot" checked>
-      <label class="form-check-label" for="spotAffinity">
-        Place pods on spot nodes
-      </label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name="affinity" id="regularAffinity" value="regular">
-      <label class="form-check-label" for="regularAffinity">
-        Place pods on regular nodes
-      </label>
-    </div>
-    </fieldset>
-    <fieldset>
-    <legend> Horizontal Pod Autoscaling </legend>
-    <div class="form-check form-switch">
-      <!-- <label class="form-label" for="hpa"> -->
-      <!--   Enable HPA -->
-      <!-- </label> -->
-      <input class="form-check-input" type="checkbox" role="switch" name="hpaEnabled" id="hpa" value="enabled" aria-describedby="hpaDescription"> 
-        <div id="hpaDescription" class="form-text">
-            Enable HPA
-        </div>
-    </div>
-    <div>
-      <label for="hpaMinReplicas"> Min Replicas</label>
-      <input type="range" name="hpaMinReplicas" id="hpaMinReplicas" list="hpaReplicaNumber" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
-      <output name="hpaMinReplicasOutput" for="hpaMinReplicas">0</output><br>
-    </div>
-    <div>
-      <label for="hpaMaxReplicas"> Max Replicas</label>
-      <input type="range" name="hpaMaxReplicas" id="hpaMaxReplicas" list="hpaReplicaNumber" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
-      <output name="hpaMaxReplicasOutput" for="hpaMaxReplicas">0</output><br>
-    </div>
-    </fieldset>
-  </form>
+    <form class="col" hx-post="/edit/affinity-hpa" hx-trigger="change delay:100ms" hx-swap="none" id="affinityForm">
+        <fieldset>
+            <legend> Pods node placement </legend>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="affinity" id="spotAffinity" value="spot" checked>
+                <label class="form-check-label" for="spotAffinity">
+                    Place pods on spot nodes
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="affinity" id="regularAffinity" value="regular">
+                <label class="form-check-label" for="regularAffinity">
+                    Place pods on regular nodes
+                </label>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend> Horizontal Pod Autoscaling </legend>
+            <div class="form-check form-switch">
+                <!-- <label class="form-label" for="hpa"> -->
+                <!--   Enable HPA -->
+                <!-- </label> -->
+                <input class="form-check-input" type="checkbox" role="switch" name="hpaEnabled" id="hpa" value="enabled" aria-describedby="hpaDescription"> 
+                <div id="hpaDescription" class="form-text">
+                    Enable HPA
+                </div>
+            </div>
+            <div>
+                <label for="hpaMinReplicas"> Min Replicas</label>
+                <input type="range" name="hpaMinReplicas" id="hpaMinReplicas" list="hpaReplicaNumber" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
+                <output name="hpaMinReplicasOutput" for="hpaMinReplicas">0</output><br>
+            </div>
+            <div>
+                <label for="hpaMaxReplicas"> Max Replicas</label>
+                <input type="range" name="hpaMaxReplicas" id="hpaMaxReplicas" list="hpaReplicaNumber" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
+                <output name="hpaMaxReplicasOutput" for="hpaMaxReplicas">0</output><br>
+            </div>
+        </fieldset>
+    </form>
 </div>
 {{ end }}
 

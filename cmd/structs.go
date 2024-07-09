@@ -1,18 +1,28 @@
 package main
 
-import "log/slog"
+import (
+	"html/template"
+	"log/slog"
+)
 
 type application struct {
-	logger       *slog.Logger
-	templateData *TemplateData
-	gitlabToken  *string
+	logger        *slog.Logger
+	templateData  *TemplateData
+	gitlabToken   *string
+	templateCache map[string]*template.Template
 }
 
-func NewApplication(l *slog.Logger, td *TemplateData, gt *string) *application {
+func NewApplication(
+	l *slog.Logger,
+	td *TemplateData,
+	gt *string,
+	tc map[string]*template.Template,
+) *application {
 	return &application{
-		logger:       l,
-		templateData: td,
-		gitlabToken:  gt,
+		logger:        l,
+		templateData:  td,
+		gitlabToken:   gt,
+		templateCache: tc,
 	}
 }
 
