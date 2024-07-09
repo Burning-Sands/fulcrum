@@ -150,11 +150,10 @@ func (a *application) handlerApplyValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
-		fileName := "values-output.yaml"
-		var writer bytes.Buffer
-		encoder := yaml.NewEncoder(&writer)
+		writer := new(bytes.Buffer)
+		encoder := yaml.NewEncoder(writer)
 		encoder.SetIndent(2)
-		encoder.Encode(*a.templateData)
+		encoder.Encode(*a.templateData.Values)
 		encoder.Close()
 		v := writer.String()
 
@@ -163,13 +162,26 @@ func (a *application) handlerApplyValues() http.Handler {
 			a.serverError(w, r, err)
 		}
 
-		cf := &gitlab.UpdateFileOptions{
-			Branch:        gitlab.Ptr("master"),
-			Content:       gitlab.Ptr(v),
-			CommitMessage: gitlab.Ptr("Adding a test file"),
+		fileName := "values-output.yaml"
+		pid := "fulcrum29/argoapps"
+		brName := "test-branch"
+		brCf := &gitlab.CreateBranchOptions{
+			Branch: gitlab.Ptr(brName),
+			Ref:    gitlab.Ptr("master"),
 		}
 
-		_, _, err = git.RepositoryFiles.UpdateFile("fulcrum29/argoapps", fileName, cf)
+		cf := &gitlab.UpdateFileOptions{
+			Branch:        gitlab.Ptr(brName),
+			Content:       gitlab.Ptr(v),
+			CommitMessage: gitlab.Ptr("Modify test file"),
+		}
+
+		_, _, err = git.Branches.CreateBranch(pid, brCf)
+		if err != nil {
+			a.serverError(w, r, err)
+			a.clientError(w, http.StatusBadRequest)
+		}
+		_, _, err = git.RepositoryFiles.UpdateFile(pid, fileName, cf)
 		if err != nil {
 			a.serverError(w, r, err)
 			a.clientError(w, http.StatusBadRequest)

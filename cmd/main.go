@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -39,7 +38,6 @@ func main() {
 		gitlabToken,
 		templateCache,
 	)
-	fmt.Println(app.templateCache)
 
 	// Start main handler (server)
 	logger.Info("Starting server")
