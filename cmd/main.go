@@ -39,10 +39,15 @@ func main() {
 		templateCache,
 	)
 
+	srv := http.Server{
+		Addr:    ":8080",
+		Handler: app.routes(),
+	}
+
 	// Start main handler (server)
 	logger.Info("Starting server")
 
-	err = http.ListenAndServe(":8080", app.routes())
+	err = srv.ListenAndServe()
 	logger.Error(err.Error())
 	os.Exit(1)
 

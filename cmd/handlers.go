@@ -14,7 +14,6 @@ import (
 func (a *application) handlerDisplayIndex() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		a.logger.Info("Display index")
 
 		tmpl := a.templateCache["index.html"]
 		tmpl.ExecuteTemplate(w, "base", a.templateData)
@@ -26,7 +25,6 @@ func (a *application) handlerDisplayIndex() http.Handler {
 func (a *application) handlerDisplayValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		a.logger.Info("Display values")
 
 		tmpl := a.templateCache["display-values.html"]
 		tmpl.ExecuteTemplate(w, "display-values", a.templateData)
@@ -38,7 +36,6 @@ func (a *application) handlerDisplayOptions() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		pathValue := r.PathValue("option")
-		a.logger.Info("Display options", "option", pathValue)
 
 		tmpl := a.templateCache["service-options.html"]
 		err := tmpl.ExecuteTemplate(w, pathValue, a.templateData)
@@ -134,13 +131,11 @@ func (a *application) handlerModifyValues() http.Handler {
 				Value: formGet("envValue"),
 			}
 			*env = append(*env, e)
-			a.logger.Info("Env variables", "Env", *env)
 
 		default:
 			a.clientError(w, http.StatusBadRequest)
 		}
 
-		a.logger.Info("Modify values", "path", pathValue)
 		w.Header().Add("HX-Trigger", "valuesChanged")
 	}
 	return http.HandlerFunc(fn)
@@ -150,12 +145,18 @@ func (a *application) handlerApplyValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
-		writer := new(bytes.Buffer)
-		encoder := yaml.NewEncoder(writer)
-		encoder.SetIndent(2)
-		encoder.Encode(*a.templateData.Values)
-		encoder.Close()
-		v := writer.String()
+		files := map[string]bytes.Buffer{
+			"values": 0,
+			"helm":   0,
+		}
+		// TODO Implement encoding functionality for all yaml files
+		for k, v := range files {
+
+			encoder := yaml.NewEncoder(files[k])
+			encoder.SetIndent(2)
+			encoder.Encode(*a.templateData.Values)
+			encoder.Close()
+		}
 
 		git, err := gitlab.NewClient(*a.gitlabToken)
 		if err != nil {
@@ -165,23 +166,28 @@ func (a *application) handlerApplyValues() http.Handler {
 		fileName := "values-output.yaml"
 		pid := "fulcrum29/argoapps"
 		brName := "test-branch"
-		brCf := &gitlab.CreateBranchOptions{
-			Branch: gitlab.Ptr(brName),
-			Ref:    gitlab.Ptr("master"),
+
+		cf := []*gitlab.CommitActionOptions{
+			{
+				Action:   gitlab.Ptr(gitlab.FileCreate),
+				Content:  gitlab.Ptr(v),
+				FilePath: gitlab.Ptr(fileName),
+			},
+			{
+				Action: gitlab.Ptr(gitlab.FileCreate),
+				// Content:  gitlab.Ptr(v),
+				FilePath: gitlab.Ptr(fileName),
+			},
 		}
 
-		cf := &gitlab.UpdateFileOptions{
+		commitOpts := &gitlab.CreateCommitOptions{
 			Branch:        gitlab.Ptr(brName),
-			Content:       gitlab.Ptr(v),
-			CommitMessage: gitlab.Ptr("Modify test file"),
+			StartBranch:   gitlab.Ptr("master"),
+			CommitMessage: gitlab.Ptr("Add service files"),
+			Actions:       cf,
 		}
 
-		_, _, err = git.Branches.CreateBranch(pid, brCf)
-		if err != nil {
-			a.serverError(w, r, err)
-			a.clientError(w, http.StatusBadRequest)
-		}
-		_, _, err = git.RepositoryFiles.UpdateFile(pid, fileName, cf)
+		_, _, err = git.Commits.CreateCommit(pid, commitOpts)
 		if err != nil {
 			a.serverError(w, r, err)
 			a.clientError(w, http.StatusBadRequest)

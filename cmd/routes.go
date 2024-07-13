@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (app *application) routes() *http.ServeMux {
+func (app *application) routes() http.Handler {
 
 	router := http.NewServeMux()
 	fs := http.FileServer(http.Dir("./ui/static"))
@@ -17,5 +17,5 @@ func (app *application) routes() *http.ServeMux {
 	router.Handle("GET /apply", app.handlerApplyValues())
 	router.Handle("GET /service-options/{option}", app.handlerDisplayOptions())
 
-	return router
+	return app.logRequests(router)
 }
