@@ -1,7 +1,6 @@
 {{ define "display-values" }}
 <script src="static/prism.js"></script>
-<div id="display-values" class="col" hx-get="/display-values" hx-swap="display-values" hx-trigger="valuesChanged from:body">
-  <h1 class="mb-4">Service declaration</h1>
+<div id="display-values" class="col" hx-get="/display-values" hx-trigger="valuesChanged from:body">
   <pre class="prism-code language-yml"><code>---
 # Chart.yaml
 {{ with .Chart -}}

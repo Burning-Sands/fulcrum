@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"html/template"
 	"net/http"
 	"path/filepath"
+
+	"gopkg.in/yaml.v3"
 )
 
 func (app *application) serverError(w http.ResponseWriter, r *http.Request, err error) {
@@ -61,4 +64,20 @@ func newTemplateCache() (map[string]*template.Template, error) {
 
 	}
 	return cache, nil
+}
+
+func encodeTemplateData(data interface{}) (string, error) {
+
+	var buffer bytes.Buffer
+
+	encoder := yaml.NewEncoder(&buffer)
+	defer encoder.Close()
+
+	encoder.SetIndent(2)
+	err := encoder.Encode(data)
+	if err != nil {
+		return "", err
+	}
+
+	return buffer.String(), nil
 }

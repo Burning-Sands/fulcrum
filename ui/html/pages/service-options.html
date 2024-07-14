@@ -1,6 +1,6 @@
 {{ define "basic" }}
 <div id="basic-options">
-    <form class="col" hx-post="/edit/basic" hx-trigger="change delay:100ms" hx-swap="none">
+    <form class="col" hx-post="/edit/basic" hx-trigger="change delay:500ms" hx-swap="none">
         <div class="form-group mb-2 col-8">
             <fieldset>
                 <legend class="fw-semibold"> Basic options: </legend> 
@@ -18,9 +18,6 @@
                 </div>
             </fieldset>
         </div>
-        <button type="submit" class="mt-2 mb-4 btn btn-outline-dark">
-            Submit
-        </button>
     </form>
 </div>
 {{ end }}
@@ -76,9 +73,6 @@
         <fieldset>
             <legend> Horizontal Pod Autoscaling </legend>
             <div class="form-check form-switch">
-                <!-- <label class="form-label" for="hpa"> -->
-                <!--   Enable HPA -->
-                <!-- </label> -->
                 <input class="form-check-input" type="checkbox" role="switch" name="hpaEnabled" id="hpa" value="enabled" aria-describedby="hpaDescription"> 
                 <div id="hpaDescription" class="form-text">
                     Enable HPA

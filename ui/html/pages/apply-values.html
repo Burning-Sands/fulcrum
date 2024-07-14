@@ -1,9 +1,14 @@
 {{ define "apply-values" }}
 <div class="col mt-5">
   <h1 class="mb-4">Apply changes</h1>
-  <button type="submit" hx-get="/apply" hx-swap="none" class="btn btn-primary text-center">
+  <button type="submit" hx-get="/apply" hx-swap="innerHTML" class="btn btn-primary text-center">
     <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
     Apply
   </button>
+ {{ with .}}
+    <div class="alert alert-success" role="alert">
+        This is a success alert with <a href="#" class="alert-link">an example link</a>. 
+    </div>
+{{ end }}
 </div>
 {{ end }}

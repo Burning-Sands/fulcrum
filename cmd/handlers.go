@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"net/http"
 	"os"
 	"strconv"
@@ -145,17 +144,15 @@ func (a *application) handlerApplyValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
-		files := map[string]bytes.Buffer{
-			"values": 0,
-			"helm":   0,
-		}
 		// TODO Implement encoding functionality for all yaml files
-		for k, v := range files {
 
-			encoder := yaml.NewEncoder(files[k])
-			encoder.SetIndent(2)
-			encoder.Encode(*a.templateData.Values)
-			encoder.Close()
+		v, err := encodeTemplateData(a.templateData.Values)
+		if err != nil {
+			a.serverError(w, r, err)
+		}
+		c, err := encodeTemplateData(a.templateData.Chart)
+		if err != nil {
+			a.serverError(w, r, err)
 		}
 
 		git, err := gitlab.NewClient(*a.gitlabToken)
@@ -163,7 +160,9 @@ func (a *application) handlerApplyValues() http.Handler {
 			a.serverError(w, r, err)
 		}
 
-		fileName := "values-output.yaml"
+		valuesFileName := "values.yaml"
+		chartFileName := "Chart.yaml"
+
 		pid := "fulcrum29/argoapps"
 		brName := "test-branch"
 
@@ -171,12 +170,12 @@ func (a *application) handlerApplyValues() http.Handler {
 			{
 				Action:   gitlab.Ptr(gitlab.FileCreate),
 				Content:  gitlab.Ptr(v),
-				FilePath: gitlab.Ptr(fileName),
+				FilePath: gitlab.Ptr(valuesFileName),
 			},
 			{
-				Action: gitlab.Ptr(gitlab.FileCreate),
-				// Content:  gitlab.Ptr(v),
-				FilePath: gitlab.Ptr(fileName),
+				Action:   gitlab.Ptr(gitlab.FileCreate),
+				Content:  gitlab.Ptr(c),
+				FilePath: gitlab.Ptr(chartFileName),
 			},
 		}
 
@@ -187,10 +186,15 @@ func (a *application) handlerApplyValues() http.Handler {
 			Actions:       cf,
 		}
 
-		_, _, err = git.Commits.CreateCommit(pid, commitOpts)
+		_, res, err := git.Commits.CreateCommit(pid, commitOpts)
 		if err != nil {
 			a.serverError(w, r, err)
 			a.clientError(w, http.StatusBadRequest)
+		}
+		if res.StatusCode == http.StatusOK {
+			w.WriteHeader(http.StatusOK)
+			tmpl := a.templateCache["apply-values.html"]
+			tmpl.Execute(w, res)
 		}
 	}
 	return http.HandlerFunc(fn)
