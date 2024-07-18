@@ -47,11 +47,12 @@ type Chart struct {
 }
 
 func NewChart() *Chart {
+	deps := map[string]string{
+		"uhc": "0.30.1",
+	}
 	return &Chart{
-		AppVersion: "0.1.0",
-		Dependencies: map[string]string{
-			"uhc": "0.30.1",
-		},
+		AppVersion:   "0.1.0",
+		Dependencies: deps,
 	}
 }
 

@@ -51,6 +51,7 @@ func (a *application) handlerModifyValues() http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		var (
+			chartName  = &a.templateData.Chart.Name
 			repository = &a.templateData.Values.Uhc.Image.Repository
 			tag        = &a.templateData.Values.Uhc.Image.Tag
 			replicas   = &a.templateData.Values.Uhc.ReplicaCount
@@ -74,6 +75,7 @@ func (a *application) handlerModifyValues() http.Handler {
 		switch pathValue {
 
 		case "basic":
+			*chartName = r.PostForm.Get("serviceName")
 			ports.ContainerPort, _ = strconv.Atoi(formGet("port-number"))
 			*repository = r.PostForm.Get("repository")
 			*tag = r.PostForm.Get("tag")
@@ -143,8 +145,6 @@ func (a *application) handlerModifyValues() http.Handler {
 func (a *application) handlerApplyValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
-
-		// TODO Implement encoding functionality for all yaml files
 
 		v, err := encodeTemplateData(a.templateData.Values)
 		if err != nil {

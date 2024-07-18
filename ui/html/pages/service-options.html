@@ -5,6 +5,16 @@
             <fieldset>
                 <legend class="fw-semibold"> Basic options: </legend> 
                 <div class="ms-2">
+                    <label class="mb-1" for="k8sRepo">Choose k8s repository for the service</label>
+                    <select class="form-select form-select-sm mb-1" id="k8sRepo" aria-label="select">
+                        <option selected>Choose k8s repository</option>
+                        <option value="portal">k8s-portal</option>
+                        <option value="dp">k8s-dp</option>
+                        <option value="frontend">k8s-frontend</option>
+                        <option value="modelling">k8s-modelling</option>
+                    </select>
+                    <label class="mb-1" for="serviceName">Service name</label>
+                    <input type="text" name="serviceName" id="serviceName" class="form-control input-sm" value="{{ .Chart.Name }}">
                     <label class="mb-1" for="repository">Repository</label>
                     <input type="text" name="repository" id="repository" class="form-control input-sm" value="{{ .Values.Uhc.Image.Repository }}">
                     <label class="mb-1" for="tag">Tag</label>
