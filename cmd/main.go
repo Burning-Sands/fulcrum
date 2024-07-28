@@ -12,8 +12,9 @@ func main() {
 	chart := NewChart()
 	values := NewValues()
 	templateData := &TemplateData{
-		Chart:  chart,
-		Values: values,
+		K8sRepo: "portal",
+		Chart:   chart,
+		Values:  values,
 	}
 	// logger
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))

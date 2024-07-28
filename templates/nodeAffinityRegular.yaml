@@ -1,8 +1,15 @@
-nodeAffinity:
-  requiredDuringSchedulingIgnoredDuringExecution:
-    nodeSelectorTerms:
-      - matchExpressions:
-        - key: "node-type"
-          operator: "In"
-          values:
-            - "regular"
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+          - key: "node-type"
+            operator: "In"
+            values:
+              - "regular"
+tolerations:
+  - key: "type"
+    operator: "Equal"
+    value: "regular"
+    effect: "PreferNoSchedule"
+

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"html/template"
 	"net/http"
+	"os"
 	"path/filepath"
 
 	"gopkg.in/yaml.v3"
@@ -21,6 +22,43 @@ func (app *application) serverError(w http.ResponseWriter, r *http.Request, err 
 func (app *application) clientError(w http.ResponseWriter, status int) {
 
 	http.Error(w, http.StatusText(status), status)
+
+}
+
+func (app *application) populateArgoAppTemplate() (string, error) {
+
+	serviceName := app.templateData.Chart.Name
+	k8sRepo := app.templateData.K8sRepo
+	t, err := os.ReadFile("templates/argocdAppTemplate.yaml")
+
+	if err != nil {
+		return "", err
+	}
+
+	t = bytes.ReplaceAll(t, []byte("replacemetemplate"), []byte(serviceName))
+	t = bytes.ReplaceAll(t, []byte("replacemeproject"), []byte(k8sRepo))
+
+	var data bytes.Buffer
+	data.Write(t)
+	at := data.String()
+	return at, nil
+
+}
+func (app *application) populateGitlabCiTemplate() (string, error) {
+
+	serviceName := app.templateData.Chart.Name
+	t, err := os.ReadFile("templates/gitlabCiTemplate.yaml")
+
+	if err != nil {
+		return "", err
+	}
+
+	t = bytes.ReplaceAll(t, []byte("replacemetemplate"), []byte(serviceName))
+
+	var data bytes.Buffer
+	data.Write(t)
+	gt := data.String()
+	return gt, nil
 
 }
 
@@ -66,7 +104,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 	return cache, nil
 }
 
-func encodeTemplateData(data interface{}) (string, error) {
+func (app *application) encodeChart() (string, error) {
 
 	var buffer bytes.Buffer
 
@@ -74,7 +112,23 @@ func encodeTemplateData(data interface{}) (string, error) {
 	defer encoder.Close()
 
 	encoder.SetIndent(2)
-	err := encoder.Encode(data)
+	err := encoder.Encode(app.templateData.Chart)
+	if err != nil {
+		return "", err
+	}
+
+	return buffer.String(), nil
+}
+
+func (app *application) encodeValues() (string, error) {
+
+	var buffer bytes.Buffer
+
+	encoder := yaml.NewEncoder(&buffer)
+	defer encoder.Close()
+
+	encoder.SetIndent(2)
+	err := encoder.Encode(app.templateData.Values)
 	if err != nil {
 		return "", err
 	}

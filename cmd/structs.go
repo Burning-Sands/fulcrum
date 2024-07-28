@@ -32,8 +32,9 @@ type EnvVariable struct {
 }
 
 type TemplateData struct {
-	Chart  *Chart
-	Values *Values
+	K8sRepo string
+	Chart   *Chart
+	Values  *Values
 }
 
 // func NewTemplateData() *TemplateData {

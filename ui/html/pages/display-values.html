@@ -38,6 +38,10 @@ uhc:
               operator: "In"
               values:
                 - {{ range .Uhc.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms}}{{range .MatchExpressions }}{{ range .Values }}{{ . }}{{end}}{{end}}{{end -}}    
+{{ with .Uhc.Tolerations}}
+  tolerations:
+    {{.}}
+{{ end }}
 {{ with .Uhc.Hpa}}
   hpa:
     enabled: {{ .Enabled }} 

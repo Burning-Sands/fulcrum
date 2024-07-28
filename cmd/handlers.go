@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"strconv"
@@ -52,13 +53,14 @@ func (a *application) handlerModifyValues() http.Handler {
 
 		var (
 			chartName  = &a.templateData.Chart.Name
+			k8sRepo    = &a.templateData.K8sRepo
+			uhc        = &a.templateData.Values.Uhc
 			repository = &a.templateData.Values.Uhc.Image.Repository
 			tag        = &a.templateData.Values.Uhc.Image.Tag
 			replicas   = &a.templateData.Values.Uhc.ReplicaCount
 			limits     = &a.templateData.Values.Uhc.Resources.Limits
 			requests   = &a.templateData.Values.Uhc.Resources.Requests
 			ports      = &a.templateData.Values.Uhc.Ports
-			affinity   = &a.templateData.Values.Uhc.Affinity
 			hpa        = &a.templateData.Values.Uhc.Hpa
 			env        = &a.templateData.Values.Uhc.Env
 		)
@@ -75,6 +77,7 @@ func (a *application) handlerModifyValues() http.Handler {
 		switch pathValue {
 
 		case "basic":
+			*k8sRepo = r.PostForm.Get("k8sRepo")
 			*chartName = r.PostForm.Get("serviceName")
 			ports.ContainerPort, _ = strconv.Atoi(formGet("port-number"))
 			*repository = r.PostForm.Get("repository")
@@ -90,23 +93,23 @@ func (a *application) handlerModifyValues() http.Handler {
 			aff := formGet("affinity")
 
 			if aff == "spot" {
-				f, err := os.ReadFile("nodeAffinitySpot.yaml")
+				f, err := os.ReadFile("templates/nodeAffinitySpot.yaml")
 				if err != nil {
 					a.serverError(w, r, err)
 					os.Exit(1)
 				}
-				err = yaml.Unmarshal(f, &affinity)
+				err = yaml.Unmarshal(f, uhc)
 				if err != nil {
 					a.serverError(w, r, err)
 					os.Exit(1)
 				}
 			} else if aff == "regular" {
-				f, err := os.ReadFile("nodeAffinityRegular.yaml")
+				f, err := os.ReadFile("templates/nodeAffinityRegular.yaml")
 				if err != nil {
 					a.serverError(w, r, err)
 					os.Exit(1)
 				}
-				err = yaml.Unmarshal(f, &affinity)
+				err = yaml.Unmarshal(f, uhc)
 				if err != nil {
 					a.serverError(w, r, err)
 					os.Exit(1)
@@ -146,11 +149,19 @@ func (a *application) handlerApplyValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
-		v, err := encodeTemplateData(a.templateData.Values)
+		v, err := a.encodeValues()
 		if err != nil {
 			a.serverError(w, r, err)
 		}
-		c, err := encodeTemplateData(a.templateData.Chart)
+		c, err := a.encodeChart()
+		if err != nil {
+			a.serverError(w, r, err)
+		}
+		at, err := a.populateArgoAppTemplate()
+		if err != nil {
+			a.serverError(w, r, err)
+		}
+		gt, err := a.populateGitlabCiTemplate()
 		if err != nil {
 			a.serverError(w, r, err)
 		}
@@ -160,22 +171,38 @@ func (a *application) handlerApplyValues() http.Handler {
 			a.serverError(w, r, err)
 		}
 
-		valuesFileName := "values.yaml"
-		chartFileName := "Chart.yaml"
-
-		pid := "fulcrum29/argoapps"
-		brName := "test-branch"
+		var (
+			serviceName      = a.templateData.Chart.Name
+			valuesFilePath   = fmt.Sprintf("services/%s/values.yaml", serviceName)
+			chartFilePath    = fmt.Sprintf("services/%s/Chart.yaml", serviceName)
+			argoAppFilePath  = fmt.Sprintf("argocdapps/templates/%s.yaml", serviceName)
+			gitlabCiFilePath = fmt.Sprintf("gitlab-ci/%s.yaml", serviceName)
+			pid              = "fulcrum29/argoapps"
+			brName           = fmt.Sprintf("Deployment_of_%s", serviceName)
+		)
 
 		cf := []*gitlab.CommitActionOptions{
 			{
 				Action:   gitlab.Ptr(gitlab.FileCreate),
 				Content:  gitlab.Ptr(v),
-				FilePath: gitlab.Ptr(valuesFileName),
+				FilePath: gitlab.Ptr(valuesFilePath),
 			},
 			{
 				Action:   gitlab.Ptr(gitlab.FileCreate),
 				Content:  gitlab.Ptr(c),
-				FilePath: gitlab.Ptr(chartFileName),
+				FilePath: gitlab.Ptr(chartFilePath),
+			},
+			{
+
+				Action:   gitlab.Ptr(gitlab.FileCreate),
+				Content:  gitlab.Ptr(at),
+				FilePath: gitlab.Ptr(argoAppFilePath),
+			},
+			{
+
+				Action:   gitlab.Ptr(gitlab.FileCreate),
+				Content:  gitlab.Ptr(gt),
+				FilePath: gitlab.Ptr(gitlabCiFilePath),
 			},
 		}
 
@@ -191,10 +218,12 @@ func (a *application) handlerApplyValues() http.Handler {
 			a.serverError(w, r, err)
 			a.clientError(w, http.StatusBadRequest)
 		}
-		if res.StatusCode == http.StatusOK {
+		a.logger.Info("Received response status from gitlab", "Response", res.Status)
+		if res.StatusCode == http.StatusCreated {
+			a.templateData = &TemplateData{}
+			a.logger.Info("Service name is", "Service", a.templateData.Chart.Name)
 			w.WriteHeader(http.StatusOK)
-			tmpl := a.templateCache["apply-values.html"]
-			tmpl.Execute(w, res)
+
 		}
 	}
 	return http.HandlerFunc(fn)
