@@ -220,9 +220,13 @@ func (a *application) handlerApplyValues() http.Handler {
 		}
 		a.logger.Info("Received response status from gitlab", "Response", res.Status)
 		if res.StatusCode == http.StatusCreated {
-			a.templateData = &TemplateData{}
+			a.templateData = NewTemplateData()
 			a.logger.Info("Service name is", "Service", a.templateData.Chart.Name)
-			w.WriteHeader(http.StatusOK)
+			tmpl := a.templateCache["apply-values.html"]
+			err := tmpl.ExecuteTemplate(w, "applied", nil)
+			if err != nil {
+				a.clientError(w, http.StatusBadRequest)
+			}
 
 		}
 	}

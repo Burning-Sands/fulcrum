@@ -9,19 +9,14 @@ import (
 
 func main() {
 	// Chart and values data
-	chart := NewChart()
-	values := NewValues()
-	templateData := &TemplateData{
-		K8sRepo: "portal",
-		Chart:   chart,
-		Values:  values,
-	}
+	templateData := NewTemplateData()
 	// logger
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	// templateCache
 	templateCache, err := newTemplateCache()
 	if err != nil {
 		logger.Error(err.Error())
+		os.Exit(1)
 	}
 
 	// flags

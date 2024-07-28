@@ -37,9 +37,13 @@ type TemplateData struct {
 	Values  *Values
 }
 
-// func NewTemplateData() *TemplateData {
-// 	return &TemplateData{}
-// }
+func NewTemplateData() *TemplateData {
+	return &TemplateData{
+		K8sRepo: "portal",
+		Chart:   NewChart(),
+		Values:  NewValues(),
+	}
+}
 
 type Chart struct {
 	Name         string            `yaml:"name"`
@@ -96,7 +100,7 @@ type Values struct {
 				} `yaml:"requiredDuringSchedulingIgnoredDuringExecution"`
 			} `yaml:"nodeAffinity"`
 		} `yaml:"affinity"`
-		Tolerations []interface{} `yaml:"tolerations"`
+		Tolerations []interface{} `yaml:"tolerations,omitempty"`
 		Ports       struct {
 			Name          string `yaml:"name"`
 			ContainerPort int    `yaml:"containerPort"`
@@ -109,7 +113,7 @@ type Values struct {
 				Protocol   string `yaml:"protocol"`
 				Port       int    `yaml:"port"`
 			} `yaml:"ports"`
-		} `yaml:"service"`
+		} `yaml:"service,omitempty"`
 		Metrics struct {
 			Enabled        bool `yaml:"enabled"`
 			ServiceMonitor struct {
