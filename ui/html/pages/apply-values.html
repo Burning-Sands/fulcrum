@@ -7,8 +7,13 @@
   </button>
 </div>
 {{ end }}
-{{ define "applied" }}
-    <div class="alert alert-success" role="alert">
-        This is a success alert with <a href="#" class="alert-link">an example link</a>. 
+{{ define "applySuccess" }}
+    <div class="alert alert-success col mt-5" role="alert">
+        Service declaration created sucessfully<a href="#" class="alert-link">an example link</a>. 
+    </div>
+{{ end }}
+{{ define "applyError" }}
+    <div class="alert alert-danger col mt-5" role="alert">
+        Something went wrong {{ . }}
     </div>
 {{ end }}

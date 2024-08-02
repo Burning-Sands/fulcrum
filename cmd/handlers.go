@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -40,7 +41,7 @@ func (a *application) handlerDisplayOptions() http.Handler {
 		tmpl := a.templateCache["service-options.html"]
 		err := tmpl.ExecuteTemplate(w, pathValue, a.templateData)
 		if err != nil {
-			a.clientError(w, http.StatusBadRequest)
+			a.serverError(w, r, err)
 		}
 
 	}
@@ -67,7 +68,7 @@ func (a *application) handlerModifyValues() http.Handler {
 
 		err := r.ParseForm()
 		if err != nil {
-			a.clientError(w, http.StatusBadRequest)
+			a.serverError(w, r, err)
 			return
 		}
 
@@ -137,7 +138,7 @@ func (a *application) handlerModifyValues() http.Handler {
 			*env = append(*env, e)
 
 		default:
-			a.clientError(w, http.StatusBadRequest)
+			a.clientError(w, errors.New("Wrong path, option doesn't exist"), 400)
 		}
 
 		w.Header().Add("HX-Trigger", "valuesChanged")
@@ -215,17 +216,20 @@ func (a *application) handlerApplyValues() http.Handler {
 
 		_, res, err := git.Commits.CreateCommit(pid, commitOpts)
 		if err != nil {
-			a.serverError(w, r, err)
-			a.clientError(w, http.StatusBadRequest)
+			a.logger.Error(err.Error())
+			tmpl := a.templateCache["apply-values.html"]
+			err := tmpl.ExecuteTemplate(w, "applyError", err.Error())
+			if err != nil {
+				a.serverError(w, r, err)
+			}
 		}
 		a.logger.Info("Received response status from gitlab", "Response", res.Status)
 		if res.StatusCode == http.StatusCreated {
 			a.templateData = NewTemplateData()
-			a.logger.Info("Service name is", "Service", a.templateData.Chart.Name)
 			tmpl := a.templateCache["apply-values.html"]
-			err := tmpl.ExecuteTemplate(w, "applied", nil)
+			err := tmpl.ExecuteTemplate(w, "applySuccess", nil)
 			if err != nil {
-				a.clientError(w, http.StatusBadRequest)
+				a.serverError(w, r, err)
 			}
 
 		}
