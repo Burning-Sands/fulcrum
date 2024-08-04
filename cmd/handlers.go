@@ -16,7 +16,14 @@ func (a *application) handlerDisplayIndex() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
-		tmpl := a.templateCache["index.html"]
+		if a.sessionManager.Exists(r.Context(), "templateDataValues") {
+
+			a.templateData.Values = a.sessionManager.Get(r.Context(), "templateDataValues").(Values)
+		} else {
+			a.templateData.Values = Values{}
+		}
+
+		tmpl := a.htmlTemplateCache["index.html"]
 		tmpl.ExecuteTemplate(w, "base", a.templateData)
 	}
 
@@ -27,7 +34,7 @@ func (a *application) handlerDisplayValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
-		tmpl := a.templateCache["display-values.html"]
+		tmpl := a.htmlTemplateCache["display-values.html"]
 		tmpl.ExecuteTemplate(w, "display-values", a.templateData)
 	}
 	return http.HandlerFunc(fn)
@@ -38,7 +45,7 @@ func (a *application) handlerDisplayOptions() http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		pathValue := r.PathValue("option")
 
-		tmpl := a.templateCache["service-options.html"]
+		tmpl := a.htmlTemplateCache["service-options.html"]
 		err := tmpl.ExecuteTemplate(w, pathValue, a.templateData)
 		if err != nil {
 			a.serverError(w, r, err)
@@ -141,6 +148,8 @@ func (a *application) handlerModifyValues() http.Handler {
 			a.clientError(w, errors.New("Wrong path, option doesn't exist"), 400)
 		}
 
+		a.sessionManager.Put(r.Context(), "templateDataValues", a.templateData.Values)
+
 		w.Header().Add("HX-Trigger", "valuesChanged")
 	}
 	return http.HandlerFunc(fn)
@@ -217,7 +226,7 @@ func (a *application) handlerApplyValues() http.Handler {
 		_, res, err := git.Commits.CreateCommit(pid, commitOpts)
 		if err != nil {
 			a.logger.Error(err.Error())
-			tmpl := a.templateCache["apply-values.html"]
+			tmpl := a.htmlTemplateCache["apply-values.html"]
 			err := tmpl.ExecuteTemplate(w, "applyError", err.Error())
 			if err != nil {
 				a.serverError(w, r, err)
@@ -226,7 +235,7 @@ func (a *application) handlerApplyValues() http.Handler {
 		a.logger.Info("Received response status from gitlab", "Response", res.Status)
 		if res.StatusCode == http.StatusCreated {
 			a.templateData = NewTemplateData()
-			tmpl := a.templateCache["apply-values.html"]
+			tmpl := a.htmlTemplateCache["apply-values.html"]
 			err := tmpl.ExecuteTemplate(w, "applySuccess", nil)
 			if err != nil {
 				a.serverError(w, r, err)

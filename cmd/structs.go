@@ -3,38 +3,36 @@ package main
 import (
 	"html/template"
 	"log/slog"
+
+	"github.com/alexedwards/scs/v2"
 )
 
 type application struct {
-	logger        *slog.Logger
-	templateData  *TemplateData
-	gitlabToken   *string
-	templateCache map[string]*template.Template
+	logger            *slog.Logger
+	templateData      *TemplateData
+	gitlabToken       *string
+	htmlTemplateCache map[string]*template.Template
+	sessionManager    *scs.SessionManager
 }
 
-func NewApplication(
-	l *slog.Logger,
-	td *TemplateData,
-	gt *string,
-	tc map[string]*template.Template,
-) *application {
-	return &application{
-		logger:        l,
-		templateData:  td,
-		gitlabToken:   gt,
-		templateCache: tc,
-	}
-}
-
-type EnvVariable struct {
-	Name  string `yaml:"name"`
-	Value string `yaml:"value,omitempty"`
-}
+// func NewApplication(
+// 	l *slog.Logger,
+// 	td *TemplateData,
+// 	gt *string,
+// 	tc map[string]*template.Template,
+// ) *application {
+// 	return &application{
+// 		logger:            l,
+// 		templateData:      td,
+// 		gitlabToken:       gt,
+// 		htmlTemplateCache: tc,
+// 	}
+// }
 
 type TemplateData struct {
 	K8sRepo string
-	Chart   *Chart
-	Values  *Values
+	Chart   Chart
+	Values  Values
 }
 
 func NewTemplateData() *TemplateData {
@@ -51,14 +49,19 @@ type Chart struct {
 	Dependencies map[string]string `yaml:"dependencies"`
 }
 
-func NewChart() *Chart {
+func NewChart() Chart {
 	deps := map[string]string{
 		"uhc": "0.30.1",
 	}
-	return &Chart{
+	return Chart{
 		AppVersion:   "0.1.0",
 		Dependencies: deps,
 	}
+}
+
+type EnvVariable struct {
+	Name  string `yaml:"name"`
+	Value string `yaml:"value,omitempty"`
 }
 
 type Values struct {
@@ -131,6 +134,6 @@ type Values struct {
 	} `yaml:"uhc"`
 }
 
-func NewValues() *Values {
-	return &Values{}
+func NewValues() Values {
+	return Values{}
 }

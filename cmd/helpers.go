@@ -65,7 +65,7 @@ func (app *application) populateGitlabCiTemplate() (string, error) {
 // TODO Implement render helper function
 // func (app *application) renderTemplate()
 
-func newTemplateCache() (map[string]*template.Template, error) {
+func newHtmlTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
 	pages, err := filepath.Glob("./ui/html/pages/*.html")
