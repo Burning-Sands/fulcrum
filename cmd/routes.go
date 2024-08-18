@@ -13,7 +13,7 @@ func (app *application) routes() http.Handler {
 	router.Handle("GET /static/", http.StripPrefix("/static", fs))
 	router.Handle("GET /{$}", app.sessionManager.LoadAndSave(app.handlerDisplayIndex()))
 	router.Handle("POST /edit/{option}", app.sessionManager.LoadAndSave(app.handlerModifyValues()))
-	router.Handle("GET /display-values", app.handlerDisplayValues())
+	router.Handle("GET /display-values", app.sessionManager.LoadAndSave(app.handlerDisplayValues()))
 	router.Handle("GET /apply", app.handlerApplyValues())
 	router.Handle("GET /service-options/{option}", app.handlerDisplayOptions())
 

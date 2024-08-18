@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	gob.Register(Values{})
+	gob.Register(TemplateData{})
 }
 
 func main() {

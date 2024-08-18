@@ -16,11 +16,11 @@ func (a *application) handlerDisplayIndex() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
-		if a.sessionManager.Exists(r.Context(), "templateDataValues") {
+		if a.sessionManager.Exists(r.Context(), "templateData") {
 
-			a.templateData.Values = a.sessionManager.Get(r.Context(), "templateDataValues").(Values)
+			*a.templateData = a.sessionManager.Get(r.Context(), "templateData").(TemplateData)
 		} else {
-			a.templateData.Values = Values{}
+			a.templateData = &TemplateData{}
 		}
 
 		tmpl := a.htmlTemplateCache["index.html"]
@@ -148,7 +148,7 @@ func (a *application) handlerModifyValues() http.Handler {
 			a.clientError(w, errors.New("Wrong path, option doesn't exist"), 400)
 		}
 
-		a.sessionManager.Put(r.Context(), "templateDataValues", a.templateData.Values)
+		a.sessionManager.Put(r.Context(), "templateData", *a.templateData)
 
 		w.Header().Add("HX-Trigger", "valuesChanged")
 	}
