@@ -1,4 +1,4 @@
-## Fulcrum project aims at simplifying deployment of applications at GRID.GG
+## Fulcrum project aims to simplify deployment of UHC based applications at GRID.GG
 
 
 
