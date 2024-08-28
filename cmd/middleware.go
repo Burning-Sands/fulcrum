@@ -2,7 +2,7 @@ package main
 
 import "net/http"
 
-func (a *application) logRequests(next http.Handler) http.Handler {
+func (app *application) logRequests(next http.Handler) http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
@@ -12,7 +12,23 @@ func (a *application) logRequests(next http.Handler) http.Handler {
 			method = r.Method
 			uri    = r.URL.RequestURI()
 		)
-		a.logger.Info("Received request", "ip", ip, "proto", proto, "method", method, "uri", uri)
+		app.logger.Info("Received request", "ip", ip, "proto", proto, "method", method, "uri", uri)
+		next.ServeHTTP(w, r)
+	}
+	return http.HandlerFunc(fn)
+}
+
+func (app *application) restoreSessionTemplateData(next http.Handler) http.Handler {
+
+	fn := func(w http.ResponseWriter, r *http.Request) {
+
+		if app.sessionManager.Exists(r.Context(), "templateData") {
+
+			*app.templateData = app.sessionManager.Get(r.Context(), "templateData").(TemplateData)
+			app.logger.Info("Restored session data")
+		} else {
+			app.templateData = &TemplateData{}
+		}
 		next.ServeHTTP(w, r)
 	}
 	return http.HandlerFunc(fn)

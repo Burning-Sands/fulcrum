@@ -65,6 +65,38 @@ func (app *application) populateGitlabCiTemplate() (string, error) {
 // TODO Implement render helper function
 // func (app *application) renderTemplate()
 
+func (app *application) encodeChart() (string, error) {
+
+	var buffer bytes.Buffer
+
+	encoder := yaml.NewEncoder(&buffer)
+	defer encoder.Close()
+
+	encoder.SetIndent(2)
+	err := encoder.Encode(app.templateData.Chart)
+	if err != nil {
+		return "", err
+	}
+
+	return buffer.String(), nil
+}
+
+func (app *application) encodeValues() (string, error) {
+
+	var buffer bytes.Buffer
+
+	encoder := yaml.NewEncoder(&buffer)
+	defer encoder.Close()
+
+	encoder.SetIndent(2)
+	err := encoder.Encode(app.templateData.Values)
+	if err != nil {
+		return "", err
+	}
+
+	return buffer.String(), nil
+}
+
 func newHtmlTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
@@ -102,36 +134,4 @@ func newHtmlTemplateCache() (map[string]*template.Template, error) {
 
 	}
 	return cache, nil
-}
-
-func (app *application) encodeChart() (string, error) {
-
-	var buffer bytes.Buffer
-
-	encoder := yaml.NewEncoder(&buffer)
-	defer encoder.Close()
-
-	encoder.SetIndent(2)
-	err := encoder.Encode(app.templateData.Chart)
-	if err != nil {
-		return "", err
-	}
-
-	return buffer.String(), nil
-}
-
-func (app *application) encodeValues() (string, error) {
-
-	var buffer bytes.Buffer
-
-	encoder := yaml.NewEncoder(&buffer)
-	defer encoder.Close()
-
-	encoder.SetIndent(2)
-	err := encoder.Encode(app.templateData.Values)
-	if err != nil {
-		return "", err
-	}
-
-	return buffer.String(), nil
 }

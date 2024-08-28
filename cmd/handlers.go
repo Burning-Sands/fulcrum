@@ -16,13 +16,6 @@ func (a *application) handlerDisplayIndex() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
-		if a.sessionManager.Exists(r.Context(), "templateData") {
-
-			*a.templateData = a.sessionManager.Get(r.Context(), "templateData").(TemplateData)
-		} else {
-			a.templateData = &TemplateData{}
-		}
-
 		tmpl := a.htmlTemplateCache["index.html"]
 		tmpl.ExecuteTemplate(w, "base", a.templateData)
 	}
@@ -43,6 +36,7 @@ func (a *application) handlerDisplayValues() http.Handler {
 func (a *application) handlerDisplayOptions() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
+
 		pathValue := r.PathValue("option")
 
 		tmpl := a.htmlTemplateCache["service-options.html"]

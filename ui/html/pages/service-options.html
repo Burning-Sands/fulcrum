@@ -41,9 +41,9 @@
                     <legend> Requests: </legend> 
                     <div class="ms-2">
                         <label for="cpu-requests">CPU</label>
-                        <input type="text" name="cpu-requests" id="cpu-requests" class="form-control input-sm">
+                        <input type="text" name="cpu-requests" id="cpu-requests" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Requests.CPU }}">
                         <label for="memory-requests">Memory</label>
-                        <input type="text" name="memory-requests" id="memory-requests" class="form-control input-sm">
+                        <input type="text" name="memory-requests" id="memory-requests" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Requests.Memory }}">
                     </div>
                 </fieldset>
                 <fieldset>
@@ -52,7 +52,7 @@
                         <label for="cpu-limits">CPU</label>
                         <input type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Limits.CPU }}">
                         <label for="memory-limits">Memory</label>
-                        <input type="text" name="memory-limits" id="memory-limits" class="form-control input-sm">
+                        <input type="text" name="memory-limits" id="memory-limits" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Limits.Memory }}">
                     </div>
                 </fieldset>
             </div>
