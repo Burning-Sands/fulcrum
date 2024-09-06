@@ -1,32 +1,22 @@
 {{ define "index" }}
-  <div class="container-lg">
-    <div class="row">
-      <div class="col-2">
-        <ul class="nav nav-tabs flex-column">
-          <li class="nav-item">
-            <a class="nav-link" hx-get="/service-options/basic" hx-target="#service-options">Basics</a>
-          </li>
-          <li class="nav-item">
-          <a class="nav-link" hx-get="/service-options/resources" hx-target="#service-options">Resources</a>
-          </li>
-          <li class="nav-item">
-          <a class="nav-link" hx-get="/service-options/affinity-hpa" hx-target="#service-options">Affinity</a>
-          </li>
-          <a class="nav-link" hx-get="/service-options/env" hx-target="#service-options">HPA</a>
-          </li>
-        </ul>
-      </div>
-    <div id="service-options" class="col bg-light rounded-1 text-dark">
-      {{ block "basic" .}}
-      {{ end }}
+<div class="uk-column-1-2">
+    </ul>
+    <div class="uk-container">
+        <div id="service-options">
+            {{ block "basic" .}}
+            {{ end }}
+        </div>
     </div>
-      {{ block "display-values" .}}
-      {{ end }}
-  </div>
-    <div id="apply-values" class="row">
-      {{ block "apply-values" .}}
-      {{ end }}
+    <div class="uk-container">
+        {{ block "display-values" .}}
+        {{ end }}
     </div>
-  </div>
+</div>
+<div class="uk-container">
+    <div id="apply-values">
+        {{ block "apply-values" .}}
+        {{ end }}
+    </div>
+</div>
 {{ end }}
 

@@ -1,100 +1,136 @@
 {{ define "basic" }}
-<div id="basic-options">
-    <form class="col" hx-post="/edit/basic" hx-trigger="change delay:500ms" hx-swap="none">
-        <div class="form-group mb-2 col-8">
-            <fieldset>
-                <legend class="fw-semibold"> Basic options: </legend> 
-                <div class="ms-2">
-                    <label class="mb-1" for="k8sRepo">Choose k8s repository for the service</label>
-                    <select class="form-select form-select-sm mb-1" name="k8sRepo" id="k8sRepo" aria-label="select">
+<div class="uk-card uk-card-default uk-card-body" id="basic-options">
+    <!-- <h4 class="uk-card-title uk-margin"> Basic options </h4> -->
+            <aside class="uk-align-left">
+                <ul class="uk-nav uk-nav-default">
+                    <li class="uk-active">
+                        <a hx-get="/service-options/basic" hx-target="#service-options">Basics</a>
+                    </li>
+                    <li>
+                        <a hx-get="/service-options/resources" hx-target="#service-options">Resources</a>
+                    </li>
+                    <li> 
+                        <a role="button" hx-get="/service-options/affinity-hpa" hx-target="#service-options">Affinity</a>
+                    </li>
+                    <li>
+                        <a hx-get="/service-options/env" hx-target="#service-options">HPA</a>
+                    </li>
+                </ul>
+            </aside>
+    <form hx-post="/edit/basic" hx-trigger="change delay:500ms" hx-swap="none">
+            <fieldset class="uk-fieldset">
+                    <label class="uk-form-label" for="k8sRepo">Choose k8s repository for the service</label>
+                    <select class="uk-select" name="k8sRepo" id="k8sRepo">
                         <option selected value="portal">k8s-portal</option>
                         <option value="dp">k8s-dp</option>
                         <option value="frontend">k8s-frontend</option>
                         <option value="modelling">k8s-modelling</option>
                     </select>
-                    <label class="mb-1" for="serviceName">Service name</label>
-                    <input type="text" name="serviceName" id="serviceName" class="form-control input-sm" value="{{ .Chart.Name }}">
-                    <label class="mb-1" for="repository">Repository</label>
-                    <input type="text" name="repository" id="repository" class="form-control input-sm" value="{{ .Values.Uhc.Image.Repository }}">
-                    <label class="mb-1" for="tag">Tag</label>
-                    <input type="text" name="tag" id="tag" class="form-control input-sm" value="{{ .Values.Uhc.Image.Tag }}">
-                    <label for="replicas">Replicas</label>
-                    <input type="range" name="replicas" id="replicas-count" list="replica-number" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="{{ .Values.Uhc.ReplicaCount }}">
+                    <label class="uk-form-label" for="serviceName">Service name</label>
+                    <input class="uk-input" type="text" name="serviceName" id="serviceName" class="form-control input-sm" value="{{ .Chart.Name }}">
+                    <label class="uk-form-label" for="repository">Repository</label>
+                    <input class="uk-input" type="text" name="repository" id="repository" class="form-control input-sm" value="{{ .Values.Uhc.Image.Repository }}">
+                    <label class="uk-form-label" for="tag">Tag</label>
+                    <input class="uk-input" type="text" name="tag" id="tag" class="form-control input-sm" value="{{ .Values.Uhc.Image.Tag }}">
+                    <label class="uk-form-label" for="replicas">Replicas</label>
+                    <input class="uk-range" type="range" name="replicas" id="replicas-count" list="replica-number" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="{{ .Values.Uhc.ReplicaCount }}">
                     <output name="replicas-output" for="replicas-number">{{ .Values.Uhc.ReplicaCount }}</output><br>
-                    <label class="mb-1" for="port-number">Port</label>
-                    <input type="text" name="port-number" id="port-number" class="form-control input-sm" value="{{ .Values.Uhc.Ports.ContainerPort }}">
+                    <label class="uk-form-label" for="port-number">Port</label>
+                    <input class="uk-input" type="text" name="port-number" id="port-number" class="form-control input-sm" value="{{ .Values.Uhc.Ports.ContainerPort }}">
                     <div id="portHelp" class="form-text">Port for your service</div>
-                </div>
             </fieldset>
-        </div>
     </form>
 </div>
 {{ end }}
 
 {{ define "resources" }}
-<div id="resources-option">
-    <form class="col" hx-post="/edit/resources" hx-trigger="change delay:100ms" hx-swap="none">
-        <fieldset>
-            <legend class="fw-semibold"> Resources: </legend> 
-            <div class="form-group mb-2 col-8">
-                <fieldset>
-                    <legend> Requests: </legend> 
-                    <div class="ms-2">
-                        <label for="cpu-requests">CPU</label>
-                        <input type="text" name="cpu-requests" id="cpu-requests" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Requests.CPU }}">
-                        <label for="memory-requests">Memory</label>
-                        <input type="text" name="memory-requests" id="memory-requests" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Requests.Memory }}">
-                    </div>
+<div class="uk-card uk-card-default uk-card-body" id="resources-option">
+            <aside class="uk-align-left">
+                <ul class="uk-nav uk-nav-default">
+                    <li class="uk-active uk-nav-divider">
+                        <a hx-get="/service-options/basic" hx-target="#service-options">Basics</a>
+                    </li>
+                    <li>
+                        <a hx-get="/service-options/resources" hx-target="#service-options">Resources</a>
+                    </li>
+                    <li> 
+                        <a role="button" hx-get="/service-options/affinity-hpa" hx-target="#service-options">Affinity</a>
+                    </li>
+                    <li>
+                        <a hx-get="/service-options/env" hx-target="#service-options">HPA</a>
+                    </li>
+                </ul>
+            </aside>
+    <form hx-post="/edit/resources" hx-trigger="change delay:100ms" hx-swap="none">
+        <fieldset class="uk-fieldset">
+                <fieldset class="uk-fieldset uk-margin">
+                    <legend class="uk-legend"> Requests: </legend> 
+                        <label class="uk-form-label" for="cpu-requests">CPU</label>
+                        <input class="uk-input" type="text" name="cpu-requests" id="cpu-requests" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Requests.CPU }}">
+                        <label class="uk-form-label" for="memory-requests">Memory</label>
+                        <input class="uk-input" type="text" name="memory-requests" id="memory-requests" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Requests.Memory }}">
+                </fieldset >
+                <fieldset class="uk-fieldset uk-margin">
+                    <legend class="uk-legend"> Limits: </legend> 
+                        <label class="uk-form-label" for="cpu-limits">CPU</label>
+                        <input class="uk-input" type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Limits.CPU }}">
+                        <label class="uk-form-label" for="memory-limits">Memory</label>
+                        <input class="uk-input" type="text" name="memory-limits" id="memory-limits" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Limits.Memory }}">
                 </fieldset>
-                <fieldset>
-                    <legend> Limits: </legend> 
-                    <div class="ms-2 mb-2">
-                        <label for="cpu-limits">CPU</label>
-                        <input type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Limits.CPU }}">
-                        <label for="memory-limits">Memory</label>
-                        <input type="text" name="memory-limits" id="memory-limits" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Limits.Memory }}">
-                    </div>
-                </fieldset>
-            </div>
         </fieldset>
     </form>
 </div>
 {{ end }}
 
 {{ define "affinity-hpa" }}
-<div id="affinity-option">
-    <form class="col" hx-post="/edit/affinity-hpa" hx-trigger="change delay:100ms" hx-swap="none" id="affinityForm">
-        <fieldset>
-            <legend> Pods node placement </legend>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="affinity" id="spotAffinity" value="spot" checked>
-                <label class="form-check-label" for="spotAffinity">
+<div class="uk-card uk-card-default uk-card-body" id="affinity-option">
+    <!-- <h4 class="uk-card-title uk-margin"> Node placement and HPA </h4> -->
+    <aside class="uk-align-left">
+        <ul class="uk-nav uk-nav-default">
+            <li class="uk-active uk-nav-divider">
+                <a hx-get="/service-options/basic" hx-target="#service-options">Basics</a>
+            </li>
+            <li>
+                <a hx-get="/service-options/resources" hx-target="#service-options">Resources</a>
+            </li>
+            <li> 
+                <a role="button" hx-get="/service-options/affinity-hpa" hx-target="#service-options">Affinity</a>
+            </li>
+            <li>
+                <a hx-get="/service-options/env" hx-target="#service-options">HPA</a>
+            </li>
+        </ul>
+    </aside>
+    <form hx-post="/edit/affinity-hpa" hx-trigger="change delay:100ms" hx-swap="none" id="affinityForm">
+        <fieldset class="uk-fieldset uk-margin">
+            <legend class="uk-legend uk-margin-small"> Pods node placement </legend>
+            <div class="uk-form-controls">
+                <input class="uk-radio" type="radio" name="affinity" id="spotAffinity" value="spot" checked>
+                <label class="uk-form-label" for="spotAffinity">
                     Place pods on spot nodes
                 </label>
             </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="affinity" id="regularAffinity" value="regular">
-                <label class="form-check-label" for="regularAffinity">
+            <div class="uk-form-controls">
+                <input class="uk-radio" type="radio" name="affinity" id="regularAffinity" value="regular">
+                <label class="uk-form-label" for="regularAffinity">
                     Place pods on regular nodes
                 </label>
             </div>
         </fieldset>
-        <fieldset>
-            <legend> Horizontal Pod Autoscaling </legend>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" name="hpaEnabled" id="hpa" value="enabled" aria-describedby="hpaDescription"> 
-                <div id="hpaDescription" class="form-text">
-                    Enable HPA
-                </div>
+        <fieldset class="uk-fieldset uk-margin">
+            <legend class="uk-legend uk-margin-small"> Horizontal Pod Autoscaling </legend>
+            <div class="uk-form-controls">
+                <input class="uk-toggle-switch uk-toggle-switch-primary" type="checkbox" role="switch" name="hpaEnabled" id="hpa" value="enabled" aria-describedby="hpaDescription"> 
+                <label class="uk-form-label" for="hpaEnabled">Enable HPA</label>
             </div>
             <div>
-                <label for="hpaMinReplicas"> Min Replicas</label>
-                <input type="range" name="hpaMinReplicas" id="hpaMinReplicas" list="hpaReplicaNumber" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
+                <label class="uk-form-label" for="hpaMinReplicas"> Min Replicas</label>
+                <input class="uk-range" type="range" name="hpaMinReplicas" id="hpaMinReplicas" list="hpaReplicaNumber" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
                 <output name="hpaMinReplicasOutput" for="hpaMinReplicas">0</output><br>
             </div>
             <div>
-                <label for="hpaMaxReplicas"> Max Replicas</label>
-                <input type="range" name="hpaMaxReplicas" id="hpaMaxReplicas" list="hpaReplicaNumber" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
+                <label class="uk-form-label" for="hpaMaxReplicas"> Max Replicas</label>
+                <input class="uk-range" type="range" name="hpaMaxReplicas" id="hpaMaxReplicas" list="hpaReplicaNumber" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="0">
                 <output name="hpaMaxReplicasOutput" for="hpaMaxReplicas">0</output><br>
             </div>
         </fieldset>
@@ -103,15 +139,31 @@
 {{ end }}
 
 {{ define "env" }}
-<div id="env-option">
-  <form class="col" id="envForm" hx-post="/edit/env" hx-swap="none">
-    <fieldset>
-    <legend> Env variables </legend>
-    <div class="input-group">
-      <input class="form-control" type="text" name="envName" id="envName" value="Env name">
-      <input class="form-control" type="text" name="envValue" id="envValue" value="Env value">
+<div class="uk-card uk-card-default uk-card-body" id="env-option">
+<!-- <h4 class="uk-card-title uk-margin"> Env variables</h4> -->
+    <aside class="uk-align-left">
+        <ul class="uk-nav uk-nav-default">
+            <li class="uk-active uk-nav-divider">
+                <a hx-get="/service-options/basic" hx-target="#service-options">Basics</a>
+            </li>
+            <li>
+                <a hx-get="/service-options/resources" hx-target="#service-options">Resources</a>
+            </li>
+            <li> 
+                <a role="button" hx-get="/service-options/affinity-hpa" hx-target="#service-options">Affinity</a>
+            </li>
+            <li>
+                <a hx-get="/service-options/env" hx-target="#service-options">HPA</a>
+            </li>
+        </ul>
+    </aside>
+  <form class="uk-form-stacked" id="envForm" hx-post="/edit/env" hx-swap="none">
+    <fieldset class="uk-fieldset">
+    <div class="uk-form-controls uk-width-1-4 uk-margin">
+      <input class="uk-input" type="text" name="envName" id="envName" value="Env name">
+      <input class="uk-input" type="text" name="envValue" id="envValue" value="Env value">
     </div>
-        <button type="submit" class="mt-2 mb-4 btn btn-outline-dark">
+        <button type="submit" class="uk-button uk-button-primary">
             Submit
         </button>
     </fieldset>
