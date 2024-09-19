@@ -22,3 +22,4 @@ go.work
 # Program binary
 fulcrum
 fulcrum.db
+tmp/
