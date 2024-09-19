@@ -51,7 +51,7 @@ type Chart struct {
 
 func NewChart() Chart {
 	deps := map[string]string{
-		"uhc": "0.30.1",
+		"uhc": "0.32.0",
 	}
 	return Chart{
 		AppVersion:   "0.1.0",
