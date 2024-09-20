@@ -1,24 +1,5 @@
 {{ define "basic" }}
-<div class="uk-card uk-card-default uk-card-body" id="basic-options">
-    <!-- <h4 class="uk-card-title uk-margin"> Basic options </h4> -->
-            <aside class="uk-align-left">
-                <ul class="uk-nav uk-nav-default">
-                    <li class="uk-active">
-                        <a hx-get="/service-options/basic" hx-target="#service-options">Basics</a>
-                    </li>
-                    <li>
-                        <span class="uk-align-left">
-                        <a hx-get="/service-options/resources" hx-target="#service-options">Resources</a>
-                        </span>
-                    </li>
-                    <li> 
-                        <a role="button" hx-get="/service-options/affinity-hpa" hx-target="#service-options">Affinity</a>
-                    </li>
-                    <li>
-                        <a hx-get="/service-options/env" hx-target="#service-options">HPA</a>
-                    </li>
-                </ul>
-            </aside>
+<div id="basic-options">
     <form hx-post="/edit/basic" hx-trigger="change delay:500ms" hx-swap="none">
             <fieldset class="uk-fieldset">
                     <label class="uk-form-label" for="k8sRepo">Choose k8s repository for the service</label>
@@ -46,23 +27,7 @@
 {{ end }}
 
 {{ define "resources" }}
-<div class="uk-card uk-card-default uk-card-body" id="resources-option">
-            <aside class="uk-align-left">
-                <ul class="uk-nav uk-nav-default">
-                    <li class="uk-active uk-nav-divider">
-                        <a hx-get="/service-options/basic" hx-target="#service-options">Basics</a>
-                    </li>
-                    <li>
-                        <a hx-get="/service-options/resources" hx-target="#service-options">Resources</a>
-                    </li>
-                    <li> 
-                        <a role="button" hx-get="/service-options/affinity-hpa" hx-target="#service-options">Affinity</a>
-                    </li>
-                    <li>
-                        <a hx-get="/service-options/env" hx-target="#service-options">HPA</a>
-                    </li>
-                </ul>
-            </aside>
+<div id="resources-option">
     <form hx-post="/edit/resources" hx-trigger="change delay:100ms" hx-swap="none">
         <fieldset class="uk-fieldset">
                 <fieldset class="uk-fieldset uk-margin">
@@ -85,24 +50,7 @@
 {{ end }}
 
 {{ define "affinity-hpa" }}
-<div class="uk-card uk-card-default uk-card-body" id="affinity-option">
-    <!-- <h4 class="uk-card-title uk-margin"> Node placement and HPA </h4> -->
-    <aside class="uk-align-left">
-        <ul class="uk-nav uk-nav-default">
-            <li class="uk-active uk-nav-divider">
-                <a hx-get="/service-options/basic" hx-target="#service-options">Basics</a>
-            </li>
-            <li>
-                <a hx-get="/service-options/resources" hx-target="#service-options">Resources</a>
-            </li>
-            <li> 
-                <a role="button" hx-get="/service-options/affinity-hpa" hx-target="#service-options">Affinity</a>
-            </li>
-            <li>
-                <a hx-get="/service-options/env" hx-target="#service-options">HPA</a>
-            </li>
-        </ul>
-    </aside>
+<div id="affinity-option">
     <form hx-post="/edit/affinity-hpa" hx-trigger="change delay:100ms" hx-swap="none" id="affinityForm">
         <fieldset class="uk-fieldset uk-margin">
             <legend class="uk-legend uk-margin-small"> Pods node placement </legend>
@@ -141,24 +89,7 @@
 {{ end }}
 
 {{ define "env" }}
-<div class="uk-card uk-card-default uk-card-body" id="env-option">
-<!-- <h4 class="uk-card-title uk-margin"> Env variables</h4> -->
-    <aside class="uk-align-left">
-        <ul class="uk-nav uk-nav-default">
-            <li class="uk-active uk-nav-divider">
-                <a hx-get="/service-options/basic" hx-target="#service-options">Basics</a>
-            </li>
-            <li>
-                <a hx-get="/service-options/resources" hx-target="#service-options">Resources</a>
-            </li>
-            <li> 
-                <a role="button" hx-get="/service-options/affinity-hpa" hx-target="#service-options">Affinity</a>
-            </li>
-            <li>
-                <a hx-get="/service-options/env" hx-target="#service-options">HPA</a>
-            </li>
-        </ul>
-    </aside>
+<div id="env-option">
   <form class="uk-form-stacked" id="envForm" hx-post="/edit/env" hx-swap="none">
     <fieldset class="uk-fieldset">
     <div class="uk-form-controls uk-width-1-4 uk-margin">

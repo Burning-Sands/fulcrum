@@ -17,6 +17,7 @@ import (
 func init() {
 	// Register TemplateData struct to store in session manager
 	gob.Register(TemplateData{})
+	gob.Register(map[string]interface{}{})
 }
 
 func main() {

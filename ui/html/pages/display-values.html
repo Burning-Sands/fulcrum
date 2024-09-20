@@ -1,8 +1,8 @@
 {{ define "display-values" }}
 <!-- <script src="static/prism.js"></script> -->
+<div id="display-values" hx-get="/display-values" hx-trigger="valuesChanged from:body">
 <script src="https://unpkg.com/prismjs@v1.29.0/components/prism-core.min.js"></script>
 <script src="https://unpkg.com/prismjs@v1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-<div id="display-values" hx-get="/display-values" hx-trigger="valuesChanged from:body">
   <pre class="prism-code language-yml"><code>---
 # Chart.yaml
 {{ with .Chart -}}
@@ -40,11 +40,16 @@ uhc:
               operator: "In"
               values:
                 - {{ range .Uhc.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms}}{{range .MatchExpressions }}{{ range .Values }}{{ . }}{{end}}{{end}}{{end -}}    
-{{ with .Uhc.Tolerations}}
+{{ with .Uhc.Tolerations }}
+{{ range .}}
   tolerations:
-    {{.}}
-{{ end }}
-{{ with .Uhc.Hpa}}
+    - effect: {{ index . "effect" }}
+      key: {{ index . "key" }}
+      operator: {{ index . "operator" }}
+      value: {{ index . "value" }}
+{{- end }}
+{{ end -}}
+{{ with .Uhc.Hpa }}
   hpa:
     enabled: {{ .Enabled }} 
     minReplicas: {{ .MinReplicas }} 

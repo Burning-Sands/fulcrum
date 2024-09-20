@@ -27,7 +27,7 @@ func (app *application) restoreSessionTemplateData(next http.Handler) http.Handl
 			*app.templateData = app.sessionManager.Get(r.Context(), "templateData").(TemplateData)
 			app.logger.Info("Restored session data")
 		} else {
-			app.templateData = &TemplateData{}
+			app.templateData = NewTemplateData()
 		}
 		next.ServeHTTP(w, r)
 	}

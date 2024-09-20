@@ -1,15 +1,32 @@
 {{ define "index" }}
 <div class="uk-column-1-2">
-    </ul>
     <div class="uk-container">
-        <div id="service-options">
-            {{ block "basic" .}}
-            {{ end }}
+        <div class="uk-card uk-card-default uk-card-body">
+            <aside class="uk-align-left">
+                <ul class="uk-nav uk-nav-default">
+                    <li class="uk-active uk-nav-divider">
+                        <a hx-get="/service-options/basic" hx-target="#service-options">Basics</a>
+                    </li>
+                    <li>
+                        <a hx-get="/service-options/resources" hx-target="#service-options">Resources</a>
+                    </li>
+                    <li> 
+                        <a role="button" hx-get="/service-options/affinity-hpa" hx-target="#service-options">Affinity</a>
+                    </li>
+                    <li>
+                        <a hx-get="/service-options/env" hx-target="#service-options">HPA</a>
+                    </li>
+                </ul>
+            </aside>
+            <div id="service-options">
+                {{ block "basic" .}}
+                {{ end }}
+            </div>
         </div>
     </div>
     <div class="uk-container">
-        {{ block "display-values" .}}
-        {{ end }}
+            {{ block "display-values" .}}
+            {{ end }}
     </div>
 </div>
 <div class="uk-container">

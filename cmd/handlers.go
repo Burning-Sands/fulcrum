@@ -17,7 +17,10 @@ func (a *application) handlerDisplayIndex() http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		tmpl := a.htmlTemplateCache["index.html"]
-		tmpl.ExecuteTemplate(w, "base", a.templateData)
+		err := tmpl.ExecuteTemplate(w, "base", a.templateData)
+		if err != nil {
+			a.serverError(w, r, err)
+		}
 	}
 
 	return http.HandlerFunc(fn)
@@ -28,7 +31,10 @@ func (a *application) handlerDisplayValues() http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		tmpl := a.htmlTemplateCache["display-values.html"]
-		tmpl.ExecuteTemplate(w, "display-values", a.templateData)
+		err := tmpl.ExecuteTemplate(w, "display-values", a.templateData)
+		if err != nil {
+			a.serverError(w, r, err)
+		}
 	}
 	return http.HandlerFunc(fn)
 }
