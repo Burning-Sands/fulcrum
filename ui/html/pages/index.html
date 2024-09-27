@@ -1,23 +1,48 @@
 {{ define "index" }}
-<div class="uk-column-1-2">
+<div class="uk-grid uk-child-width-1-2" uk-grid>
     <div class="uk-container">
-        <div class="uk-card uk-card-default uk-card-body">
+        <div class="uk-card uk-card-default uk-card-body uk-margin-medium">
             <aside class="uk-align-left">
                 <ul class="uk-nav uk-nav-default">
-                    <li class="uk-active uk-nav-divider">
-                        <a hx-get="/service-options/basic" hx-target="#service-options">Basics</a>
+                    <li class="uk-nav-divider">
+                        <a role="button" hx-get="/service-options/basic" hx-target="#service-options">
+                        <div class="uk-flex">
+                            <uk-icon width="20" height="20" icon="corner-up-right"></uk-icon>
+                            <div class="uk-flex-1 uk-margin-small-left">
+                                <p>Basics</p>
+                            </div>
+                        </div>
+                    </a>
                     </li>
                     <li>
-                        <a hx-get="/service-options/resources" hx-target="#service-options">Resources</a>
+                        <a role="button" hx-get="/service-options/resources" hx-target="#service-options">
+                        <div class="uk-flex">
+                            <uk-icon width="20" height="20" icon="calculator"></uk-icon>
+                            <div class="uk-flex-1 uk-margin-small-left">
+                                <p>Resources</p>
+                            </div>
+                        </div>
+                        </a>
                     </li>
                     <li> 
-                        <a role="button" hx-get="/service-options/affinity-hpa" hx-target="#service-options">Affinity & HPA</a>
+                        <a role="button" hx-get="/service-options/affinity-hpa" hx-target="#service-options">
+                        <div class="uk-flex">
+                            <uk-icon width="20" height="20" icon="boxes"></uk-icon>
+                            <div class="uk-flex-1 uk-margin-small-left">
+                                <p>Affinity & HPA</p>
+                            </div>
+                        </div>
+                        </a>
                     </li>
                     <li>
-                        <a hx-get="/service-options/env" hx-target="#service-options">Env vars</a>
-                    </li>
-                    <li>
-                        <a hx-get="/service-options/gitlab" hx-target="#service-options">Gitlab options</a>
+                        <a role="button" hx-get="/service-options/env" hx-target="#service-options">
+                        <div class="uk-flex">
+                            <uk-icon width="20" height="20" icon="receipt"></uk-icon>
+                            <div class="uk-flex-1 uk-margin-small-left">
+                                <p>Env vars</p>
+                            </div>
+                        </div>
+                        </a>
                     </li>
                 </ul>
             </aside>
@@ -26,15 +51,13 @@
                 {{ end }}
             </div>
         </div>
+        <div id="apply-values">
+            {{ block "apply-values" .}}
+            {{ end }}
+        </div>
     </div>
     <div class="uk-container">
-            {{ block "display-values" .}}
-            {{ end }}
-    </div>
-</div>
-<div class="uk-container">
-    <div id="apply-values">
-        {{ block "apply-values" .}}
+        {{ block "display-values" .}}
         {{ end }}
     </div>
 </div>

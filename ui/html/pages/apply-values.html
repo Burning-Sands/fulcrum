@@ -1,19 +1,41 @@
 {{ define "apply-values" }}
-<div class="col mt-5">
-  <h1 class="mb-4">Apply changes</h1>
-  <button type="submit" hx-get="/apply" hx-target="#apply-values" hx-swap="innerHTML" class="btn btn-primary text-center">
-    <span class="spinner-border spinner-border-sm htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
-    Apply
-  </button>
+<div class="uk-card uk-card-body uk-card-default uk-margin-large">
+    <div id="gitlab-option">
+        <form class="uk-form-stacked" id="envForm" hx-post="/edit/gitlab" hx-swap="none">
+            <fieldset class="uk-fieldset">
+                <legend class="uk-legend uk-margin"> Specify gitlab options: </legend> 
+                <label class="uk-form-label" for="k8sRepo">Choose k8s repository for the service</label>
+                <select class="uk-select uk-margin-small" name="k8sRepo" id="k8sRepo">
+                    <option value="portal">k8s-portal</option>
+                    <option value="dp">k8s-dp</option>
+                    <option value="frontend">k8s-frontend</option>
+                    <option value="modelling">k8s-modelling</option>
+                </select>
+                <!-- <label class="uk-form-label" for="serviceName">Service name</label> -->
+                <!-- <input class="uk-input uk-margin-small" type="text" name="serviceName" id="serviceName" class="form-control input-sm" value="{{ .GitlabTemplate.Input.ServiceName }}"> -->
+                <label class="uk-form-label" for="serviceRuleStg">Specify gitlab service rule for staging </label>
+                <input class="uk-input uk-margin-small" type="text" name="serviceRuleStg" id="serviceRuleStg" class="form-control input-sm" value="{{ .GitlabTemplate.Input.ServiceNameRuleStg }}">
+                    <label class="uk-form-label" for="serviceRuleStg">Specify gitlab service rule for production</label>
+                    <input class="uk-input uk-margin-small" type="text" name="serviceRuleStg" id="serviceRulePrd" class="form-control input-sm" value="{{ .GitlabTemplate.Input.ServiceNameRulePrd }}">
+            </fieldset >
+        </form>
+    </div>
+    <button type="submit" hx-get="/apply" hx-target="#apply-values" hx-swap="innerHTML" class="uk-button uk-button-primary uk-text-center">
+        Create Merge Request 
+    </button>
 </div>
 {{ end }}
 {{ define "applySuccess" }}
-    <div class="alert alert-success col mt-5" role="alert">
+<div class="uk-alert>" uk-alert>
+    <div class="uk-alert-description">
         Service declaration created sucessfully<a href="#" class="alert-link">an example link</a>. 
     </div>
+</div>
 {{ end }}
 {{ define "applyError" }}
-    <div class="alert alert-danger col mt-5" role="alert">
+<div class="uk-alert-danger" uk-alert>
+    <div class="uk-alert-description">
         Something went wrong {{ . }}
     </div>
+</div>
 {{ end }}

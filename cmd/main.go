@@ -43,7 +43,7 @@ func main() {
 	// session manager
 	sessionManager := scs.New()
 	sessionManager.Store = sqlite3store.New(db)
-	sessionManager.Lifetime = 12 * time.Hour
+	sessionManager.Lifetime = 1 * time.Hour
 
 	// flags
 	gitlabToken := flag.String("token", "", "Gitlab token for repo")

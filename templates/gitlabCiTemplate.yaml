@@ -1,6 +1,6 @@
 input:
-  service_name: {{ .service_name }} 
-  service_name_rule_stg: {{ .service_name_rule_stg }} 
-  service_name_rule_prd: {{ .service_name_rule_prd }} 
-  enable_stg_deployment: {{ .enable_stg_deploy }} 
-  enable_prd_deployment: {{ .enable_prd_deploy }} 
+  service_name: {{ Input.ServiceName }} 
+  service_name_rule_stg: {{ .Input.ServiceNameRuleStg }} 
+  service_name_rule_prd: {{ .Input.ServiceNameRulePrd }} 
+  enable_stg_deployment: {{ .Input.EnableStgDeployment }} 
+  enable_prd_deployment: {{ .Input.EnablePrdDeployment }} 

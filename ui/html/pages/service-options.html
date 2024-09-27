@@ -12,7 +12,7 @@
                     <input class="uk-range" type="range" name="replicas" id="replicas-count" list="replica-number" class="form-range"  min="0" max="8" oninput="this.nextElementSibling.value = this.value" value="{{ .Values.Uhc.ReplicaCount }}">
                     <output name="replicas-output" for="replicas-number">{{ .Values.Uhc.ReplicaCount }}</output><br>
                     <label class="uk-form-label" for="port-number">Port</label>
-                    <input class="uk-input" type="text" name="port-number" id="port-number" class="form-control input-sm" value="{{ .Values.Uhc.Ports.ContainerPort }}">
+                    <input class="uk-input" type="text" name="port-number" id="port-number" class="form-control input-sm" placeholder="256Mi" value="{{ .Values.Uhc.Ports.ContainerPort }}">
                     <div id="portHelp" class="form-text">Port for your service</div>
             </fieldset>
     </form>
@@ -22,22 +22,18 @@
 {{ define "resources" }}
 <div id="resources-option">
     <form hx-post="/edit/resources" hx-trigger="change delay:100ms" hx-swap="none">
-        <fieldset class="uk-fieldset">
-                <fieldset class="uk-fieldset uk-margin">
+                <fieldset class="uk-fieldset">
                     <legend class="uk-legend"> Requests: </legend> 
                         <label class="uk-form-label" for="cpu-requests">CPU</label>
-                        <input class="uk-input" type="text" name="cpu-requests" id="cpu-requests" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Requests.CPU }}">
+                        <input class="uk-input" type="text" name="cpu-requests" id="cpu-requests" class="form-control input-sm" placeholder="100m" value="{{ .Values.Uhc.Resources.Requests.CPU }}">
                         <label class="uk-form-label" for="memory-requests">Memory</label>
-                        <input class="uk-input" type="text" name="memory-requests" id="memory-requests" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Requests.Memory }}">
-                </fieldset >
-                <fieldset class="uk-fieldset uk-margin">
-                    <legend class="uk-legend"> Limits: </legend> 
+                        <input class="uk-input" type="text" name="memory-requests" id="memory-requests" class="form-control input-sm" placeholder="256Mi" value="{{ .Values.Uhc.Resources.Requests.Memory }}">
+                    <legend class="uk-legend uk-margin"> Limits: </legend> 
                         <label class="uk-form-label" for="cpu-limits">CPU</label>
-                        <input class="uk-input" type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Limits.CPU }}">
+                        <input class="uk-input" type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" placeholder="150m" value="{{ .Values.Uhc.Resources.Limits.CPU }}">
                         <label class="uk-form-label" for="memory-limits">Memory</label>
-                <input class="uk-input" type="text" name="memory-limits" id="memory-limits" class="form-control input-sm" value="{{ with .Values.Uhc.Resources.Limits.Memory }}{{ . }}{{else}}100Mi{{end}}">
+            <input class="uk-input" type="text" name="memory-limits" id="memory-limits" class="form-control input-sm" placeholder="256Mi" value="{{ .Values.Uhc.Resources.Limits.Memory }}">
                 </fieldset>
-        </fieldset>
     </form>
 </div>
 {{ end }}
@@ -93,28 +89,6 @@
             Submit
         </button>
     </fieldset>
-  </form>
-</div>
-{{ end }}
-{{ define "gitlab" }}
-<div id="gitlab-option">
-  <form class="uk-form-stacked" id="envForm" hx-post="/edit/gitlab" hx-swap="none">
-    <fieldset class="uk-fieldset">
-            <legend class="uk-legend"> Specify gitlab options: </legend> 
-            <label class="uk-form-label" for="k8sRepo">Choose k8s repository for the service</label>
-            <select class="uk-select" name="k8sRepo" id="k8sRepo">
-                <option value="portal">k8s-portal</option>
-                <option value="dp">k8s-dp</option>
-                <option value="frontend">k8s-frontend</option>
-                <option value="modelling">k8s-modelling</option>
-            </select>
-            <label class="uk-form-label" for="serviceName">Service name</label>
-            <input class="uk-input" type="text" name="serviceName" id="serviceName" class="form-control input-sm" value="{{ .GitlabTemplate.Input.ServiceName }}">
-            <label class="uk-form-label" for="serviceRuleStg">Specify gitlab service rule for staging </label>
-            <input class="uk-input" type="text" name="serviceRuleStg" id="serviceRuleStg" class="form-control input-sm" value="{{ .GitlabTemplate.Input.ServiceNameRuleStg }}">
-            <label class="uk-form-label" for="serviceRuleStg">Specify gitlab service rule for production</label>
-            <input class="uk-input" type="text" name="serviceRuleStg" id="serviceRulePrd" class="form-control input-sm" value="{{ .GitlabTemplate.Input.ServiceNameRulePrd }}">
-        </fieldset >
   </form>
 </div>
 {{ end }}

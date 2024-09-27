@@ -30,6 +30,7 @@ type application struct {
 // }
 
 type TemplateData struct {
+	K8sRepo        string
 	Chart          Chart
 	Values         Values
 	GitlabTemplate GitlabTemplate
@@ -65,8 +66,7 @@ type EnvVariable struct {
 }
 
 type GitlabTemplate struct {
-	K8sRepo string
-	Input   struct {
+	Input struct {
 		ServiceName         string `yaml:"service_name,omitempty"`
 		ServiceNameRuleStg  string `yaml:"service_name_rule_stg,omitempty"`
 		ServiceNameRulePrd  string `yaml:"service_name_rule_prd,omitempty"`

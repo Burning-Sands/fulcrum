@@ -62,6 +62,15 @@ uhc:
 {{end}}
 {{end}}
 {{end -}}
+# gitlab-ci.yaml
+{{- with .GitlabTemplate }}
+input:
+  service_name: {{ .Input.ServiceName }} 
+  service_name_rule_stg: {{ .Input.ServiceNameRuleStg }} 
+  service_name_rule_prd: {{ .Input.ServiceNameRulePrd }} 
+  enable_stg_deployment: {{ .Input.EnableStgDeployment }} 
+  enable_prd_deployment: {{ .Input.EnablePrdDeployment }} 
+{{ end}}
 </code></pre>
 </div>
 {{ end }}

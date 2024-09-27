@@ -70,7 +70,7 @@ func (a *application) handlerModifyValues() http.Handler {
 			ports              = &a.templateData.Values.Uhc.Ports
 			hpa                = &a.templateData.Values.Uhc.Hpa
 			env                = &a.templateData.Values.Uhc.Env
-			k8sRepo            = &a.templateData.GitlabTemplate.K8sRepo
+			k8sRepo            = &a.templateData.K8sRepo
 			serviceName        = &a.templateData.GitlabTemplate.Input.ServiceName
 			serviceNameRuleStg = &a.templateData.GitlabTemplate.Input.ServiceNameRuleStg
 			serviceNameRulePrd = &a.templateData.GitlabTemplate.Input.ServiceNameRulePrd
@@ -89,6 +89,7 @@ func (a *application) handlerModifyValues() http.Handler {
 
 		case "basic":
 			*chartName = r.PostForm.Get("serviceName")
+			*serviceName = r.PostForm.Get("serviceName")
 			ports.ContainerPort, _ = strconv.Atoi(formGet("port-number"))
 			*repository = r.PostForm.Get("repository")
 			*tag = r.PostForm.Get("tag")
@@ -179,10 +180,10 @@ func (a *application) handlerApplyValues() http.Handler {
 		// if err != nil {
 		// 	a.serverError(w, r, err)
 		// }
-		// gt, err := a.populateGitlabCiTemplate()
-		// if err != nil {
-		// 	a.serverError(w, r, err)
-		// }
+		gt, err := a.encodeGitlabTemplate()
+		if err != nil {
+			a.serverError(w, r, err)
+		}
 
 		git, err := gitlab.NewClient(*a.gitlabToken)
 		if err != nil {
@@ -190,13 +191,13 @@ func (a *application) handlerApplyValues() http.Handler {
 		}
 
 		var (
-			serviceName    = a.templateData.Chart.Name
+			serviceName    = a.templateData.GitlabTemplate.Input.ServiceName
 			valuesFilePath = fmt.Sprintf("services/%s/values.yaml", serviceName)
 			chartFilePath  = fmt.Sprintf("services/%s/Chart.yaml", serviceName)
 			// argoAppFilePath  = fmt.Sprintf("argocdapps/templates/%s.yaml", serviceName)
-			// gitlabCiFilePath = fmt.Sprintf("gitlab-ci/%s.yaml", serviceName)
-			pid    = "fulcrum29/argoapps"
-			brName = fmt.Sprintf("Deployment_of_%s", serviceName)
+			gitlabCiFilePath = fmt.Sprintf("gitlab-ci/%s.yaml", serviceName)
+			pid              = "fulcrum29/argoapps"
+			brName           = fmt.Sprintf("Deployment_of_%s", serviceName)
 		)
 
 		cf := []*gitlab.CommitActionOptions{
@@ -216,12 +217,12 @@ func (a *application) handlerApplyValues() http.Handler {
 			// 	Content:  gitlab.Ptr(at),
 			// 	FilePath: gitlab.Ptr(argoAppFilePath),
 			// },
-			// {
-			//
-			// 	Action:   gitlab.Ptr(gitlab.FileCreate),
-			// 	Content:  gitlab.Ptr(gt),
-			// 	FilePath: gitlab.Ptr(gitlabCiFilePath),
-			// },
+			{
+
+				Action:   gitlab.Ptr(gitlab.FileCreate),
+				Content:  gitlab.Ptr(gt),
+				FilePath: gitlab.Ptr(gitlabCiFilePath),
+			},
 		}
 
 		commitOpts := &gitlab.CreateCommitOptions{
