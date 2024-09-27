@@ -2,13 +2,6 @@
 <div id="basic-options">
     <form hx-post="/edit/basic" hx-trigger="change delay:500ms" hx-swap="none">
             <fieldset class="uk-fieldset">
-                    <label class="uk-form-label" for="k8sRepo">Choose k8s repository for the service</label>
-                    <select class="uk-select" name="k8sRepo" id="k8sRepo">
-                        <option selected value="portal">k8s-portal</option>
-                        <option value="dp">k8s-dp</option>
-                        <option value="frontend">k8s-frontend</option>
-                        <option value="modelling">k8s-modelling</option>
-                    </select>
                     <label class="uk-form-label" for="serviceName">Service name</label>
                     <input class="uk-input" type="text" name="serviceName" id="serviceName" class="form-control input-sm" value="{{ .Chart.Name }}">
                     <label class="uk-form-label" for="repository">Repository</label>
@@ -42,7 +35,7 @@
                         <label class="uk-form-label" for="cpu-limits">CPU</label>
                         <input class="uk-input" type="text" name="cpu-limits" id="cpu-limits" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Limits.CPU }}">
                         <label class="uk-form-label" for="memory-limits">Memory</label>
-                        <input class="uk-input" type="text" name="memory-limits" id="memory-limits" class="form-control input-sm" value="{{ .Values.Uhc.Resources.Limits.Memory }}">
+                <input class="uk-input" type="text" name="memory-limits" id="memory-limits" class="form-control input-sm" value="{{ with .Values.Uhc.Resources.Limits.Memory }}{{ . }}{{else}}100Mi{{end}}">
                 </fieldset>
         </fieldset>
     </form>
@@ -100,6 +93,28 @@
             Submit
         </button>
     </fieldset>
+  </form>
+</div>
+{{ end }}
+{{ define "gitlab" }}
+<div id="gitlab-option">
+  <form class="uk-form-stacked" id="envForm" hx-post="/edit/gitlab" hx-swap="none">
+    <fieldset class="uk-fieldset">
+            <legend class="uk-legend"> Specify gitlab options: </legend> 
+            <label class="uk-form-label" for="k8sRepo">Choose k8s repository for the service</label>
+            <select class="uk-select" name="k8sRepo" id="k8sRepo">
+                <option value="portal">k8s-portal</option>
+                <option value="dp">k8s-dp</option>
+                <option value="frontend">k8s-frontend</option>
+                <option value="modelling">k8s-modelling</option>
+            </select>
+            <label class="uk-form-label" for="serviceName">Service name</label>
+            <input class="uk-input" type="text" name="serviceName" id="serviceName" class="form-control input-sm" value="{{ .GitlabTemplate.Input.ServiceName }}">
+            <label class="uk-form-label" for="serviceRuleStg">Specify gitlab service rule for staging </label>
+            <input class="uk-input" type="text" name="serviceRuleStg" id="serviceRuleStg" class="form-control input-sm" value="{{ .GitlabTemplate.Input.ServiceNameRuleStg }}">
+            <label class="uk-form-label" for="serviceRuleStg">Specify gitlab service rule for production</label>
+            <input class="uk-input" type="text" name="serviceRuleStg" id="serviceRulePrd" class="form-control input-sm" value="{{ .GitlabTemplate.Input.ServiceNameRulePrd }}">
+        </fieldset >
   </form>
 </div>
 {{ end }}

@@ -1,27 +1,27 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: replacemetemplate
+  name: {{ .service }}
   namespace: argocd
   annotations:
     notifications.argoproj.io/subscribe.slack: gitops-data-platform
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: replacemeproject 
+  project: {{ .project }} 
 
   source:
     repoURL: {{ .Values.argocd.spec.source.repoURL }}
     targetRevision: {{ .Values.argocd.spec.source.targetRevision }}
-    path: "clusters/{{ .Values.cloudProvider }}-{{ .Values.clusterProjectName }}/services/replacemetemplate"
+    path: "clusters/{{ .Values.cloudProvider }}-{{ .Values.clusterProjectName }}/services/{{ .service }}"
     helm:
-      releaseName: replacemetemplate
+      releaseName: {{ .service }}
       valueFiles:
         - values.yaml
 
   destination:
     server: {{ .Values.argocd.spec.destination.server }}
-    namespace: replacemeproject 
+    namespace: {{ .project }} 
 
   syncPolicy:
     automated:

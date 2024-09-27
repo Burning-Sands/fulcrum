@@ -60,17 +60,20 @@ func (a *application) handlerModifyValues() http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
 		var (
-			chartName  = &a.templateData.Chart.Name
-			k8sRepo    = &a.templateData.K8sRepo
-			uhc        = &a.templateData.Values.Uhc
-			repository = &a.templateData.Values.Uhc.Image.Repository
-			tag        = &a.templateData.Values.Uhc.Image.Tag
-			replicas   = &a.templateData.Values.Uhc.ReplicaCount
-			limits     = &a.templateData.Values.Uhc.Resources.Limits
-			requests   = &a.templateData.Values.Uhc.Resources.Requests
-			ports      = &a.templateData.Values.Uhc.Ports
-			hpa        = &a.templateData.Values.Uhc.Hpa
-			env        = &a.templateData.Values.Uhc.Env
+			chartName          = &a.templateData.Chart.Name
+			uhc                = &a.templateData.Values.Uhc
+			repository         = &a.templateData.Values.Uhc.Image.Repository
+			tag                = &a.templateData.Values.Uhc.Image.Tag
+			replicas           = &a.templateData.Values.Uhc.ReplicaCount
+			limits             = &a.templateData.Values.Uhc.Resources.Limits
+			requests           = &a.templateData.Values.Uhc.Resources.Requests
+			ports              = &a.templateData.Values.Uhc.Ports
+			hpa                = &a.templateData.Values.Uhc.Hpa
+			env                = &a.templateData.Values.Uhc.Env
+			k8sRepo            = &a.templateData.GitlabTemplate.K8sRepo
+			serviceName        = &a.templateData.GitlabTemplate.Input.ServiceName
+			serviceNameRuleStg = &a.templateData.GitlabTemplate.Input.ServiceNameRuleStg
+			serviceNameRulePrd = &a.templateData.GitlabTemplate.Input.ServiceNameRulePrd
 		)
 
 		err := r.ParseForm()
@@ -85,7 +88,6 @@ func (a *application) handlerModifyValues() http.Handler {
 		switch pathValue {
 
 		case "basic":
-			*k8sRepo = r.PostForm.Get("k8sRepo")
 			*chartName = r.PostForm.Get("serviceName")
 			ports.ContainerPort, _ = strconv.Atoi(formGet("port-number"))
 			*repository = r.PostForm.Get("repository")
@@ -144,6 +146,12 @@ func (a *application) handlerModifyValues() http.Handler {
 			}
 			*env = append(*env, e)
 
+		case "gitlab":
+			*k8sRepo = r.PostForm.Get("k8sRepo")
+			*serviceName = r.PostForm.Get("serviceName")
+			*serviceNameRuleStg = r.PostForm.Get("serviceNameRuleStg")
+			*serviceNameRulePrd = r.PostForm.Get("serviceNameRulePrd")
+
 		default:
 			a.clientError(w, errors.New("Wrong path, option doesn't exist"), 400)
 		}
@@ -167,14 +175,14 @@ func (a *application) handlerApplyValues() http.Handler {
 		if err != nil {
 			a.serverError(w, r, err)
 		}
-		at, err := a.populateArgoAppTemplate()
-		if err != nil {
-			a.serverError(w, r, err)
-		}
-		gt, err := a.populateGitlabCiTemplate()
-		if err != nil {
-			a.serverError(w, r, err)
-		}
+		// at, err := a.populateArgoAppTemplate()
+		// if err != nil {
+		// 	a.serverError(w, r, err)
+		// }
+		// gt, err := a.populateGitlabCiTemplate()
+		// if err != nil {
+		// 	a.serverError(w, r, err)
+		// }
 
 		git, err := gitlab.NewClient(*a.gitlabToken)
 		if err != nil {
@@ -182,13 +190,13 @@ func (a *application) handlerApplyValues() http.Handler {
 		}
 
 		var (
-			serviceName      = a.templateData.Chart.Name
-			valuesFilePath   = fmt.Sprintf("services/%s/values.yaml", serviceName)
-			chartFilePath    = fmt.Sprintf("services/%s/Chart.yaml", serviceName)
-			argoAppFilePath  = fmt.Sprintf("argocdapps/templates/%s.yaml", serviceName)
-			gitlabCiFilePath = fmt.Sprintf("gitlab-ci/%s.yaml", serviceName)
-			pid              = "fulcrum29/argoapps"
-			brName           = fmt.Sprintf("Deployment_of_%s", serviceName)
+			serviceName    = a.templateData.Chart.Name
+			valuesFilePath = fmt.Sprintf("services/%s/values.yaml", serviceName)
+			chartFilePath  = fmt.Sprintf("services/%s/Chart.yaml", serviceName)
+			// argoAppFilePath  = fmt.Sprintf("argocdapps/templates/%s.yaml", serviceName)
+			// gitlabCiFilePath = fmt.Sprintf("gitlab-ci/%s.yaml", serviceName)
+			pid    = "fulcrum29/argoapps"
+			brName = fmt.Sprintf("Deployment_of_%s", serviceName)
 		)
 
 		cf := []*gitlab.CommitActionOptions{
@@ -202,18 +210,18 @@ func (a *application) handlerApplyValues() http.Handler {
 				Content:  gitlab.Ptr(c),
 				FilePath: gitlab.Ptr(chartFilePath),
 			},
-			{
-
-				Action:   gitlab.Ptr(gitlab.FileCreate),
-				Content:  gitlab.Ptr(at),
-				FilePath: gitlab.Ptr(argoAppFilePath),
-			},
-			{
-
-				Action:   gitlab.Ptr(gitlab.FileCreate),
-				Content:  gitlab.Ptr(gt),
-				FilePath: gitlab.Ptr(gitlabCiFilePath),
-			},
+			// {
+			//
+			// 	Action:   gitlab.Ptr(gitlab.FileCreate),
+			// 	Content:  gitlab.Ptr(at),
+			// 	FilePath: gitlab.Ptr(argoAppFilePath),
+			// },
+			// {
+			//
+			// 	Action:   gitlab.Ptr(gitlab.FileCreate),
+			// 	Content:  gitlab.Ptr(gt),
+			// 	FilePath: gitlab.Ptr(gitlabCiFilePath),
+			// },
 		}
 
 		commitOpts := &gitlab.CreateCommitOptions{
