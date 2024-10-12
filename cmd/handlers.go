@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	// "github.com/fulcrum29/fulcrum/yamleditor"
+	"github.com/fulcrum29/fulcrum/pkg/templatedata"
 	gitlab "github.com/xanzy/go-gitlab"
 	"gopkg.in/yaml.v3"
 )
@@ -141,7 +142,7 @@ func (a *application) handlerModifyValues() http.Handler {
 			hpa.MaxReplicas, _ = strconv.Atoi(formGet("hpaMaxReplicas"))
 
 		case "env":
-			e := EnvVariable{
+			e := templatedata.EnvVariable{
 				Name:  formGet("envName"),
 				Value: formGet("envValue"),
 			}
@@ -168,11 +169,11 @@ func (a *application) handlerApplyValues() http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
-		v, err := a.encodeValues()
+		v, err := a.templateData.EncodeValues()
 		if err != nil {
 			a.serverError(w, r, err)
 		}
-		c, err := a.encodeChart()
+		c, err := a.templateData.EncodeChart()
 		if err != nil {
 			a.serverError(w, r, err)
 		}
@@ -180,7 +181,7 @@ func (a *application) handlerApplyValues() http.Handler {
 		// if err != nil {
 		// 	a.serverError(w, r, err)
 		// }
-		gt, err := a.encodeGitlabTemplate()
+		gt, err := a.templateData.EncodeGitlabTemplate()
 		if err != nil {
 			a.serverError(w, r, err)
 		}
@@ -243,7 +244,7 @@ func (a *application) handlerApplyValues() http.Handler {
 		}
 		a.logger.Info("Received response status from gitlab", "Response", res.Status)
 		if res.StatusCode == http.StatusCreated {
-			a.templateData = NewTemplateData()
+			a.templateData = templatedata.NewTemplateData()
 			tmpl := a.htmlTemplateCache["apply-values.html"]
 			err := tmpl.ExecuteTemplate(w, "applySuccess", nil)
 			if err != nil {

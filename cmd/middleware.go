@@ -1,6 +1,10 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/fulcrum29/fulcrum/pkg/templatedata"
+)
 
 func (app *application) logRequests(next http.Handler) http.Handler {
 
@@ -24,10 +28,10 @@ func (app *application) restoreSessionTemplateData(next http.Handler) http.Handl
 
 		if app.sessionManager.Exists(r.Context(), "templateData") {
 
-			*app.templateData = app.sessionManager.Get(r.Context(), "templateData").(TemplateData)
+			*app.templateData = app.sessionManager.Get(r.Context(), "templateData").(templatedata.TemplateData)
 			app.logger.Info("Restored session data")
 		} else {
-			app.templateData = NewTemplateData()
+			app.templateData = templatedata.NewTemplateData()
 		}
 		next.ServeHTTP(w, r)
 	}

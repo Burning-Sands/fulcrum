@@ -92,3 +92,16 @@
   </form>
 </div>
 {{ end }}
+
+{{ define "ingress" }}
+<div id="ingress-option">
+  <form class="uk-form-stacked" id="ingressForm" hx-trigger="change delay:100ms" hx-post="/edit/ingress">
+    <fieldset class="uk-fieldset">
+    <div class="uk-form-controls uk-width-1-4 uk-margin">
+      <input class="uk-input" type="text" name="ingressHost" id="ingressHost" value="Ingress host">
+      <input class="uk-input" type="text" name="ingressPath" id="ingressPath" value="Path">
+    </div>
+    </fieldset>
+  </form>
+</div>
+{{end}}

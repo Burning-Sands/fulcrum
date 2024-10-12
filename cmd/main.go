@@ -11,18 +11,20 @@ import (
 
 	"github.com/alexedwards/scs/sqlite3store"
 	"github.com/alexedwards/scs/v2"
+	sessionstorage "github.com/fulcrum29/fulcrum/internal/session-storage"
+	"github.com/fulcrum29/fulcrum/pkg/templatedata"
 	_ "modernc.org/sqlite"
 )
 
 func init() {
 	// Register TemplateData struct to store in session manager
-	gob.Register(TemplateData{})
+	gob.Register(templatedata.TemplateData{})
 	gob.Register(map[string]interface{}{})
 }
 
 func main() {
 	// Chart and values data
-	templateData := NewTemplateData()
+	templateData := templatedata.NewTemplateData()
 	// logger
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	// html templates cache
@@ -41,6 +43,7 @@ func main() {
 	defer db.Close()
 
 	// session manager
+	sessionstorage.EnsureSessionsTableExists(db)
 	sessionManager := scs.New()
 	sessionManager.Store = sqlite3store.New(db)
 	sessionManager.Lifetime = 1 * time.Hour

@@ -3,14 +3,15 @@ module github.com/fulcrum29/fulcrum
 go 1.22.3
 
 require (
+	github.com/alexedwards/scs/sqlite3store v0.0.0-20240316134038-7e11d57e8885
+	github.com/alexedwards/scs/v2 v2.8.0
 	github.com/vmware-labs/yaml-jsonpointer v0.1.1
 	github.com/xanzy/go-gitlab v0.105.0
 	gopkg.in/yaml.v3 v3.0.1
+	modernc.org/sqlite v1.31.1
 )
 
 require (
-	github.com/alexedwards/scs/sqlite3store v0.0.0-20240316134038-7e11d57e8885 // indirect
-	github.com/alexedwards/scs/v2 v2.8.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/go-openapi/jsonpointer v0.19.3 // indirect
 	github.com/go-openapi/swag v0.19.5 // indirect
@@ -39,7 +40,6 @@ require (
 	modernc.org/libc v1.55.3 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
 	modernc.org/memory v1.8.0 // indirect
-	modernc.org/sqlite v1.31.1 // indirect
 	modernc.org/strutil v1.2.0 // indirect
 	modernc.org/token v1.1.0 // indirect
 )
