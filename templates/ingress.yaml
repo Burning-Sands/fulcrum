@@ -1,0 +1,5 @@
+ingress:
+  annotations:
+  ingressClass: ingress-aws-euw1-nginx-internal
+  hosts:
+    - api.grid.gg 
