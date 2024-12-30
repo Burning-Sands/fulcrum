@@ -9,7 +9,7 @@ import (
 
 	// "github.com/fulcrum29/fulcrum/yamleditor"
 	"github.com/fulcrum29/fulcrum/pkg/templatedata"
-	gitlab "github.com/xanzy/go-gitlab"
+	github "github.com/google/go-github/github"
 	"gopkg.in/yaml.v3"
 )
 
@@ -72,9 +72,9 @@ func (a *application) handlerModifyValues() http.Handler {
 			hpa                = &a.templateData.Values.Uhc.Hpa
 			env                = &a.templateData.Values.Uhc.Env
 			k8sRepo            = &a.templateData.K8sRepo
-			serviceName        = &a.templateData.GitlabTemplate.Input.ServiceName
-			serviceNameRuleStg = &a.templateData.GitlabTemplate.Input.ServiceNameRuleStg
-			serviceNameRulePrd = &a.templateData.GitlabTemplate.Input.ServiceNameRulePrd
+			serviceName        = &a.templateData.githubTemplate.Input.ServiceName
+			serviceNameRuleStg = &a.templateData.githubTemplate.Input.ServiceNameRuleStg
+			serviceNameRulePrd = &a.templateData.githubTemplate.Input.ServiceNameRulePrd
 		)
 
 		err := r.ParseForm()
@@ -148,7 +148,7 @@ func (a *application) handlerModifyValues() http.Handler {
 			}
 			*env = append(*env, e)
 
-		case "gitlab":
+		case "github":
 			*k8sRepo = r.PostForm.Get("k8sRepo")
 			*serviceName = r.PostForm.Get("serviceName")
 			*serviceNameRuleStg = r.PostForm.Get("serviceNameRuleStg")
@@ -181,55 +181,43 @@ func (a *application) handlerApplyValues() http.Handler {
 		// if err != nil {
 		// 	a.serverError(w, r, err)
 		// }
-		gt, err := a.templateData.EncodeGitlabTemplate()
-		if err != nil {
-			a.serverError(w, r, err)
-		}
-
-		git, err := gitlab.NewClient(*a.gitlabToken)
+		// gt, err := a.templateData.EncodegithubTemplate()
 		if err != nil {
 			a.serverError(w, r, err)
 		}
 
 		var (
-			serviceName    = a.templateData.GitlabTemplate.Input.ServiceName
+			serviceName    = a.templateData.Chart.Name
 			valuesFilePath = fmt.Sprintf("services/%s/values.yaml", serviceName)
 			chartFilePath  = fmt.Sprintf("services/%s/Chart.yaml", serviceName)
 			// argoAppFilePath  = fmt.Sprintf("argocdapps/templates/%s.yaml", serviceName)
-			gitlabCiFilePath = fmt.Sprintf("gitlab-ci/%s.yaml", serviceName)
-			pid              = "fulcrum29/argoapps"
-			brName           = fmt.Sprintf("Deployment_of_%s", serviceName)
+			pid    = "fulcrum29/argoapps"
+			brName = fmt.Sprintf("Deployment_of_%s", serviceName)
 		)
 
-		cf := []*gitlab.CommitActionOptions{
+		cf := []*github.CommitActionOptions{
 			{
-				Action:   gitlab.Ptr(gitlab.FileCreate),
-				Content:  gitlab.Ptr(v),
-				FilePath: gitlab.Ptr(valuesFilePath),
+				Action:   github.Ptr(github.FileCreate),
+				Content:  github.Ptr(v),
+				FilePath: github.Ptr(valuesFilePath),
 			},
 			{
-				Action:   gitlab.Ptr(gitlab.FileCreate),
-				Content:  gitlab.Ptr(c),
-				FilePath: gitlab.Ptr(chartFilePath),
+				Action:   github.Ptr(github.FileCreate),
+				Content:  github.Ptr(c),
+				FilePath: github.Ptr(chartFilePath),
 			},
 			// {
 			//
-			// 	Action:   gitlab.Ptr(gitlab.FileCreate),
-			// 	Content:  gitlab.Ptr(at),
-			// 	FilePath: gitlab.Ptr(argoAppFilePath),
+			// 	Action:   github.Ptr(github.FileCreate),
+			// 	Content:  github.Ptr(at),
+			// 	FilePath: github.Ptr(argoAppFilePath),
 			// },
-			{
-
-				Action:   gitlab.Ptr(gitlab.FileCreate),
-				Content:  gitlab.Ptr(gt),
-				FilePath: gitlab.Ptr(gitlabCiFilePath),
-			},
 		}
 
-		commitOpts := &gitlab.CreateCommitOptions{
-			Branch:        gitlab.Ptr(brName),
-			StartBranch:   gitlab.Ptr("master"),
-			CommitMessage: gitlab.Ptr("Add service files"),
+		commitOpts := &github.CreateCommitOptions{
+			Branch:        github.Ptr(brName),
+			StartBranch:   github.Ptr("master"),
+			CommitMessage: github.Ptr("Add service files"),
 			Actions:       cf,
 		}
 
@@ -242,7 +230,7 @@ func (a *application) handlerApplyValues() http.Handler {
 				a.serverError(w, r, err)
 			}
 		}
-		a.logger.Info("Received response status from gitlab", "Response", res.Status)
+		a.logger.Info("Received response status from github", "Response", res.Status)
 		if res.StatusCode == http.StatusCreated {
 			a.templateData = templatedata.NewTemplateData()
 			tmpl := a.htmlTemplateCache["apply-values.html"]

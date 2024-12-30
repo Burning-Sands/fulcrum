@@ -13,6 +13,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 	sessionstorage "github.com/fulcrum29/fulcrum/internal/session-storage"
 	"github.com/fulcrum29/fulcrum/pkg/templatedata"
+	"github.com/google/go-github/v66/github"
 	_ "modernc.org/sqlite"
 )
 
@@ -49,19 +50,23 @@ func main() {
 	sessionManager.Lifetime = 1 * time.Hour
 
 	// flags
-	gitlabToken := flag.String("token", "", "Gitlab token for repo")
+	githubToken := flag.String("token", "", "github token for repo")
 	flag.Parse()
-	if *gitlabToken == "" {
+	if *githubToken == "" {
 		flag.PrintDefaults()
-		logger.Error("Missing flag gitlabToken")
+		logger.Error("Missing flag githubToken")
 		os.Exit(1)
 	}
+
+	// github client
+	githubClient := github.NewClient(nil).WithAuthToken(*githubToken)
 
 	// Initialize main app
 	app := &application{
 		logger:            logger,
 		templateData:      templateData,
-		gitlabToken:       gitlabToken,
+		githubToken:       githubToken,
+		githubClient:      githubClient,
 		htmlTemplateCache: htmlTemplateCache,
 		sessionManager:    sessionManager,
 	}

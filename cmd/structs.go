@@ -6,14 +6,16 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/fulcrum29/fulcrum/pkg/templatedata"
+	"github.com/google/go-github/v66/github"
 )
 
 type application struct {
 	logger            *slog.Logger
 	templateData      *templatedata.TemplateData
-	gitlabToken       *string
+	githubToken       *string
 	htmlTemplateCache map[string]*template.Template
 	sessionManager    *scs.SessionManager
+	githubClient      *github.Client
 }
 
 // func NewApplication(
