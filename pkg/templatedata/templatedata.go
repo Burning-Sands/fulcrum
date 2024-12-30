@@ -34,16 +34,6 @@ type EnvVariable struct {
 	Value string `yaml:"value,omitempty"`
 }
 
-// type GitlabTemplate struct {
-// 	Input struct {
-// 		ServiceName         string `yaml:"service_name,omitempty"`
-// 		ServiceNameRuleStg  string `yaml:"service_name_rule_stg,omitempty"`
-// 		ServiceNameRulePrd  string `yaml:"service_name_rule_prd,omitempty"`
-// 		EnableStgDeployment string `yaml:"enable_stg_deployment,omitempty"`
-// 		EnablePrdDeployment string `yaml:"enable_prd_deployment,omitempty"`
-// 	} `yaml:"input"`
-// }
-
 type Values struct {
 	Uhc struct {
 		NameOverride     string `yaml:"nameOverride,omitempty"`
