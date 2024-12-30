@@ -1,17 +1,15 @@
 package templatedata
 
 type TemplateData struct {
-	K8sRepo        string
-	Chart          Chart
-	Values         Values
-	GitlabTemplate GitlabTemplate
+	K8sRepo string
+	Chart   Chart
+	Values  Values
 }
 
 func NewTemplateData() *TemplateData {
 	return &TemplateData{
-		Chart:          NewChart(),
-		Values:         NewValues(),
-		GitlabTemplate: GitlabTemplate{},
+		Chart:  NewChart(),
+		Values: NewValues(),
 	}
 }
 
@@ -34,16 +32,6 @@ func NewChart() Chart {
 type EnvVariable struct {
 	Name  string `yaml:"name"`
 	Value string `yaml:"value,omitempty"`
-}
-
-type GitlabTemplate struct {
-	Input struct {
-		ServiceName         string `yaml:"service_name,omitempty"`
-		ServiceNameRuleStg  string `yaml:"service_name_rule_stg,omitempty"`
-		ServiceNameRulePrd  string `yaml:"service_name_rule_prd,omitempty"`
-		EnableStgDeployment string `yaml:"enable_stg_deployment,omitempty"`
-		EnablePrdDeployment string `yaml:"enable_prd_deployment,omitempty"`
-	} `yaml:"input"`
 }
 
 type Values struct {
